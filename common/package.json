@@ -1,0 +1,31 @@
+{
+  "name": "@softwarearchetypes/common",
+  "version": "0.0.1",
+  "description": "Shared utilities for software archetypes: Result monad, Pair, Preconditions, and event publishing infrastructure",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "archetype",
+    "result-monad",
+    "preconditions",
+    "event-publisher",
+    "domain-primitives",
+    "pair",
+    "versioning",
+    "software-architecture"
+  ]
+}

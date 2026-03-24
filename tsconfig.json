@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "strict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": ".",
+    "composite": true,
+    "skipLibCheck": true
+  },
+  "references": [
+    { "path": "common" },
+    { "path": "quantity" },
+    { "path": "accounting" },
+    { "path": "pricing" },
+    { "path": "product" },
+    { "path": "party" },
+    { "path": "inventory" },
+    { "path": "ordering" },
+    { "path": "graphs" },
+    { "path": "rules" },
+    { "path": "planvsexecution" }
+  ],
+  "files": []
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@softwarearchetypes/party",
+  "version": "0.0.1",
+  "description": "Party management archetype for persons, organizations, addresses, roles, capabilities, and relationships",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@softwarearchetypes/common": "*"
+  },
+  "keywords": [
+    "archetype",
+    "party",
+    "person",
+    "organization",
+    "address",
+    "role",
+    "capability",
+    "contact",
+    "CRM",
+    "identity"
+  ]
+}

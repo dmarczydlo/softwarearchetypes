@@ -1,0 +1,44 @@
+{
+  "name": "@softwarearchetypes/archetypes",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A catalogue of reusable software archetypes: recurring structural patterns for business domains, each packaged as an independent npm module",
+  "workspaces": [
+    "common",
+    "quantity",
+    "accounting",
+    "pricing",
+    "product",
+    "party",
+    "inventory",
+    "ordering",
+    "graphs",
+    "rules",
+    "planvsexecution"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "software-archetypes",
+    "domain-driven-design",
+    "business-patterns",
+    "accounting",
+    "pricing",
+    "product-catalog",
+    "inventory",
+    "ordering",
+    "party-management",
+    "business-rules",
+    "plan-vs-execution",
+    "graph-algorithms",
+    "reusable-patterns"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

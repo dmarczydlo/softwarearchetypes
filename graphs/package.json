@@ -1,0 +1,35 @@
+{
+  "name": "@softwarearchetypes/graphs",
+  "version": "0.0.1",
+  "description": "Graph-based archetypes for cycles, scheduling, influence zones, and user journey modeling",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@softwarearchetypes/common": "*",
+    "@softwarearchetypes/quantity": "*"
+  },
+  "keywords": [
+    "archetype",
+    "graph",
+    "scheduling",
+    "influence-zone",
+    "user-journey",
+    "directed-graph",
+    "process-scheduling",
+    "reservation"
+  ]
+}
