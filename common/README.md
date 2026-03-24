@@ -28,8 +28,18 @@ The common archetype provides foundational building blocks used across all other
 
 ## Installation
 
+Clone the repository and install locally:
+
 ```bash
-npm install @softwarearchetypes/common
+git clone <repo-url> archetypes-typescript
+cd archetypes-typescript
+npm install
+```
+
+Then link the archetype into your project:
+
+```bash
+npm install ../archetypes-typescript/common
 ```
 
 ## Dependencies
@@ -54,4 +64,189 @@ const result = divide(10, 2)
 // Preconditions for validation
 Preconditions.checkArgument(amount > 0, "Amount must be positive");
 Preconditions.checkNotNull(name, "Name is required");
+```
+
+### CompositeResult: aggregating multiple Results
+
+```typescript
+import { CompositeResult, Success, Failure } from '@softwarearchetypes/common';
+
+const nameResult: Result<string, string> = validateName(name);
+const emailResult: Result<string, string> = validateEmail(email);
+const ageResult: Result<string, number> = validateAge(age);
+
+const composite = CompositeResult.of(nameResult, emailResult, ageResult);
+
+if (composite.isSuccess()) {
+  // All validations passed
+  console.log("All fields valid");
+} else {
+  // Collect all failure messages
+  composite.peekFailure(errors => console.error("Validation errors:", errors));
+}
+```
+
+### Event publishing with InMemoryEventsPublisher
+
+```typescript
+import {
+  PublishedEvent,
+  InMemoryEventsPublisher,
+  EventHandler,
+} from '@softwarearchetypes/common';
+
+// Define a domain event
+class UserRegistered extends PublishedEvent {
+  constructor(readonly userId: string, readonly email: string) {
+    super();
+  }
+}
+
+// Set up the publisher and a handler
+const publisher = new InMemoryEventsPublisher();
+
+const handler: EventHandler<UserRegistered> = {
+  handle: async (event: UserRegistered) => {
+    console.log(`Sending welcome email to ${event.email}`);
+  },
+};
+
+publisher.subscribe(UserRegistered, handler);
+
+// Publish an event
+await publisher.publish(new UserRegistered("u-123", "alice@example.com"));
+```
+
+### Version tracking for domain entities
+
+```typescript
+import { Version } from '@softwarearchetypes/common';
+
+const initial = Version.initial();        // version 0
+const next = initial.next();              // version 1
+const again = next.next();                // version 2
+
+console.log(initial.value);  // 0
+console.log(next.value);     // 1
+
+// Useful for optimistic concurrency checks
+function updateEntity(entity: MyEntity, expectedVersion: Version): Result<string, MyEntity> {
+  if (!entity.version.equals(expectedVersion)) {
+    return new Failure("Concurrent modification detected");
+  }
+  return new Success({ ...entity, version: entity.version.next() });
+}
+```
+
+## Real-world usage examples
+
+### API response handling
+
+Wrap service-layer outcomes in `Result` to give controllers a uniform response shape without throwing exceptions:
+
+```typescript
+import { Result, Success, Failure } from '@softwarearchetypes/common';
+
+async function getUserById(id: string): Promise<Result<string, User>> {
+  const user = await userRepository.findById(id);
+  if (!user) return new Failure(`User ${id} not found`);
+  return new Success(user);
+}
+
+// In an Express handler:
+app.get('/users/:id', async (req, res) => {
+  const result = await getUserById(req.params.id);
+  result.fold(
+    error => res.status(404).json({ error }),
+    user  => res.status(200).json(user),
+  );
+});
+```
+
+### Form validation
+
+Use `CompositeResult` to run all field validations in one pass and surface every error at once instead of stopping at the first failure:
+
+```typescript
+import { CompositeResult, Result, Success, Failure, Preconditions } from '@softwarearchetypes/common';
+
+function validateUsername(value: string): Result<string, string> {
+  if (!value || value.length < 3) return new Failure("Username must be at least 3 characters");
+  if (/[^a-z0-9_]/i.test(value)) return new Failure("Username may only contain letters, digits, and underscores");
+  return new Success(value);
+}
+
+function validatePassword(value: string): Result<string, string> {
+  if (value.length < 8) return new Failure("Password must be at least 8 characters");
+  return new Success(value);
+}
+
+function validateRegistrationForm(form: { username: string; password: string }) {
+  const composite = CompositeResult.of(
+    validateUsername(form.username),
+    validatePassword(form.password),
+  );
+
+  return composite.fold(
+    errors => ({ ok: false, errors }),
+    _      => ({ ok: true,  errors: [] }),
+  );
+}
+```
+
+### Domain event publishing in microservices
+
+Use `InMemoryEventsPublisher` inside a bounded context to decouple side-effects (emails, audit logs, downstream calls) from core business logic:
+
+```typescript
+import { PublishedEvent, InMemoryEventsPublisher } from '@softwarearchetypes/common';
+
+class OrderPlaced extends PublishedEvent {
+  constructor(readonly orderId: string, readonly totalAmount: number) { super(); }
+}
+
+class InventoryReserved extends PublishedEvent {
+  constructor(readonly orderId: string, readonly items: string[]) { super(); }
+}
+
+const bus = new InMemoryEventsPublisher();
+
+// Wire up handlers (e.g., in your DI container setup)
+bus.subscribe(OrderPlaced, {
+  handle: async (e) => await notificationService.sendOrderConfirmation(e.orderId),
+});
+bus.subscribe(OrderPlaced, {
+  handle: async (e) => await auditLog.record("order.placed", e.orderId),
+});
+bus.subscribe(InventoryReserved, {
+  handle: async (e) => await warehouseService.pick(e.orderId, e.items),
+});
+
+// In the application service — no knowledge of side-effects required
+async function placeOrder(command: PlaceOrderCommand) {
+  const order = Order.create(command);
+  await orderRepository.save(order);
+  await bus.publish(new OrderPlaced(order.id, order.totalAmount));
+  await bus.publish(new InventoryReserved(order.id, order.itemIds));
+}
+```
+
+### Input validation middleware
+
+Use `Preconditions` as lightweight guard clauses at the boundary of any function or class method to fail fast with descriptive messages:
+
+```typescript
+import { Preconditions } from '@softwarearchetypes/common';
+
+class TransferService {
+  transfer(fromAccountId: string, toAccountId: string, amount: number): void {
+    Preconditions.checkNotNull(fromAccountId, "Source account ID is required");
+    Preconditions.checkNotNull(toAccountId, "Destination account ID is required");
+    Preconditions.checkArgument(amount > 0, "Transfer amount must be positive");
+    Preconditions.checkArgument(fromAccountId !== toAccountId, "Cannot transfer to the same account");
+    Preconditions.checkState(this.isOpen, "Service is not accepting transfers at this time");
+
+    // Proceed with the transfer knowing all invariants hold
+  }
+}
 ```
