@@ -2,21 +2,23 @@
 
 A catalogue of reusable software archetypes implemented in TypeScript. Each archetype captures a recurring structural pattern found across many business domains, packaged as an independent, installable npm module.
 
+> **Attribution**: This is a TypeScript rewrite of the original Java [archetypes](https://github.com/Software-Archetypes/archetypes) project by Bartłomiej Słota, Jakub Pilimon, and Sławomir Sobótka. Licensed under [CC BY-NC-SA 4.0](./LICENSE) — non-commercial use only, same license applies to derivatives.
+
 ## Archetype Catalogue
 
-| Package | Description | When to reach for it |
-|---------|-------------|---------------------|
-| [`@softwarearchetypes/common`](./common) | Result monad, Preconditions, Pair, event publishing | Foundation for all other archetypes; error handling without exceptions |
-| [`@softwarearchetypes/quantity`](./quantity) | Quantity/Unit, Money, Percentage | Modeling measured amounts, currencies, percentages |
-| [`@softwarearchetypes/accounting`](./accounting) | Double-entry bookkeeping, transactions, posting rules | Ledgers, wallets, balanced two-sided tracking |
-| [`@softwarearchetypes/pricing`](./pricing) | Calculators, step functions, composite pricing | Tariffs, rate cards, tiered/graduated pricing, subscription billing |
-| [`@softwarearchetypes/product`](./product) | Product types, instances, features, packages, relationships | Product catalogs, configurable products, bundles |
-| [`@softwarearchetypes/party`](./party) | Persons, organizations, addresses, roles, capabilities | CRM, identity, contact management, org structures |
-| [`@softwarearchetypes/inventory`](./inventory) | Instances, availability, reservations, waitlists | Warehouse, rental, booking, resource management |
-| [`@softwarearchetypes/ordering`](./ordering) | Orders, line items, fulfillment, multi-party roles | E-commerce, B2B ordering, procurement, marketplaces |
-| [`@softwarearchetypes/graphs`](./graphs) | Cycles, scheduling, influence zones, user journeys | Graph algorithms, process scheduling, state machines |
-| [`@softwarearchetypes/rules`](./rules) | Discount chains, visitor modifiers, scoring algebra | Promotions, loyalty rules, credit scoring, rating engines |
-| [`@softwarearchetypes/planvsexecution`](./planvsexecution) | Plan vs execution delta analysis | Production tracking, repayment monitoring, SLA/variance analysis |
+| Package                                                    | Description                                                 | When to reach for it                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [`@softwarearchetypes/common`](./common)                   | Result monad, Preconditions, Pair, event publishing         | Foundation for all other archetypes; error handling without exceptions |
+| [`@softwarearchetypes/quantity`](./quantity)               | Quantity/Unit, Money, Percentage                            | Modeling measured amounts, currencies, percentages                     |
+| [`@softwarearchetypes/accounting`](./accounting)           | Double-entry bookkeeping, transactions, posting rules       | Ledgers, wallets, balanced two-sided tracking                          |
+| [`@softwarearchetypes/pricing`](./pricing)                 | Calculators, step functions, composite pricing              | Tariffs, rate cards, tiered/graduated pricing, subscription billing    |
+| [`@softwarearchetypes/product`](./product)                 | Product types, instances, features, packages, relationships | Product catalogs, configurable products, bundles                       |
+| [`@softwarearchetypes/party`](./party)                     | Persons, organizations, addresses, roles, capabilities      | CRM, identity, contact management, org structures                      |
+| [`@softwarearchetypes/inventory`](./inventory)             | Instances, availability, reservations, waitlists            | Warehouse, rental, booking, resource management                        |
+| [`@softwarearchetypes/ordering`](./ordering)               | Orders, line items, fulfillment, multi-party roles          | E-commerce, B2B ordering, procurement, marketplaces                    |
+| [`@softwarearchetypes/graphs`](./graphs)                   | Cycles, scheduling, influence zones, user journeys          | Graph algorithms, process scheduling, state machines                   |
+| [`@softwarearchetypes/rules`](./rules)                     | Discount chains, visitor modifiers, scoring algebra         | Promotions, loyalty rules, credit scoring, rating engines              |
+| [`@softwarearchetypes/planvsexecution`](./planvsexecution) | Plan vs execution delta analysis                            | Production tracking, repayment monitoring, SLA/variance analysis       |
 
 ## How to identify which archetype you need
 
@@ -57,24 +59,44 @@ Use the keyword signals below to match your domain problem to the right archetyp
 
 ## Installation
 
-Each archetype is an independent npm package. Install only what you need:
+### From GitHub (recommended)
+
+Install individual archetypes directly from the GitHub repository — no npm registry needed:
 
 ```bash
-# Install a single archetype
-npm install @softwarearchetypes/accounting
+# Install a single archetype (replace <github-user> with the actual user/org)
+npm install github:<github-user>/archetypes-typescript#main --workspace=common
+npm install github:<github-user>/archetypes-typescript#main --workspace=accounting
 
-# Dependencies are declared -- npm will pull in transitive packages automatically
-# e.g., accounting pulls in common + quantity
+# Or add to package.json manually:
+# "@softwarearchetypes/common": "github:<github-user>/archetypes-typescript#main"
 ```
 
-To work with the full monorepo locally:
+### From a local clone
 
 ```bash
-git clone <repo-url>
-cd typescript
+git clone <repo-url> archetypes-typescript
+cd archetypes-typescript
 npm install    # installs all workspaces
 npm run build  # builds all archetypes
-npm test       # runs all tests
+npm test       # runs all 885 tests
+```
+
+Then link into your project:
+
+```bash
+# From your project directory
+npm install ../archetypes-typescript/common
+npm install ../archetypes-typescript/accounting
+# or use npm link for development
+```
+
+### Git submodule
+
+```bash
+# Add as a submodule in your project
+git submodule add <repo-url> lib/archetypes
+# Then reference in your tsconfig.json paths
 ```
 
 ## Architecture and composition
@@ -117,7 +139,3 @@ Real systems typically compose multiple archetypes. Common combinations:
 - **Subscription platform**: `product` + `pricing` + `ordering` + `accounting`
 - **Manufacturing**: `product` + `inventory` + `planvsexecution` + `graphs`
 - **Marketplace**: `party` + `product` + `ordering` + `rules`
-
-## License
-
-See repository root for license information.
