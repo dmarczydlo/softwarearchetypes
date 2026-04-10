@@ -22,7 +22,7 @@ describe("ProductFacade", () => {
             "pcs", "IDENTICAL", new Set(), new Set(), {}
         ));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const found = facade.findByProductId(new FindProductTypeCriteria(productId));
         expect(found).toBeDefined();
         expect(found!.name).toBe("Simple Product");
@@ -43,7 +43,7 @@ describe("ProductFacade", () => {
             { category: "electronics" },
         ));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const found = facade.findByProductId(new FindProductTypeCriteria(productId));
         expect(found!.mandatoryFeatures.size).toBe(2);
     });
@@ -62,7 +62,7 @@ describe("ProductFacade", () => {
             {},
         ));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const found = facade.findByProductId(new FindProductTypeCriteria(productId));
         expect(found!.optionalFeatures.size).toBe(2);
     });
@@ -73,7 +73,7 @@ describe("ProductFacade", () => {
             "pcs", "IDENTICAL", new Set(), new Set(), {}
         ));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toContain("Unknown product identifier type");
     });
 

@@ -1,4 +1,4 @@
-import { Result, Success, Failure } from '@softwarearchetypes/common';
+import { Result, ResultFactory } from '@softwarearchetypes/common';
 import { Quantity, Unit, Money } from '@softwarearchetypes/quantity';
 import { AddOrderLineCommand } from './commands/add-order-line-command.js';
 import { CancelOrderCommand } from './commands/cancel-order-command.js';
@@ -55,26 +55,20 @@ export class OrderingFacade {
 
             const order = builder.build();
             this.orderRepository.save(order);
-            return new Success<string, OrderView>(OrderView.from(order));
+            return ResultFactory.success<string, OrderView>(OrderView.from(order));
         } catch (e) {
-            return new Failure<string, OrderView>((e as Error).message);
+            return ResultFactory.failure<string, OrderView>((e as Error).message);
         }
     }
 
     handleAddOrderLine(command: AddOrderLineCommand): Result<string, OrderView> {
         return this.findAndModify(command.orderId, order => {
-            let specMap: Map<string, string>;
-            if (command.specification instanceof Map) {
-                specMap = command.specification;
-            } else {
-                specMap = new Map(Object.entries(command.specification));
-            }
             const line = new OrderLine(
                 OrderLineId.generate(),
                 ProductIdentifier.of(command.productId),
                 Quantity.of(command.quantity, Unit.of(command.unit, command.unit)),
-                specMap.size > 0
-                    ? OrderLineSpecification.of(specMap)
+                command.specification.size > 0
+                    ? OrderLineSpecification.of(command.specification)
                     : OrderLineSpecification.empty(),
                 null
             );
@@ -127,9 +121,9 @@ export class OrderingFacade {
             }
             modification(order);
             this.orderRepository.save(order);
-            return new Success<string, OrderView>(OrderView.from(order));
+            return ResultFactory.success<string, OrderView>(OrderView.from(order));
         } catch (e) {
-            return new Failure<string, OrderView>((e as Error).message);
+            return ResultFactory.failure<string, OrderView>((e as Error).message);
         }
     }
 

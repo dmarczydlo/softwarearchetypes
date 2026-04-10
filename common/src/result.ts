@@ -2,9 +2,9 @@ import { Preconditions } from './preconditions.js';
 
 export interface Result<F, S> {
 
-    isSuccess(): boolean;
+    success(): boolean;
 
-    isFailure(): boolean;
+    failure(): boolean;
 
     getSuccess(): S;
 
@@ -37,22 +37,22 @@ export interface Result<F, S> {
 
 export class Success<F, S> implements Result<F, S> {
 
-    private readonly success: S;
+    private readonly _success: S;
 
     constructor(success: S) {
-        this.success = success;
+        this._success = success;
     }
 
-    public isSuccess(): boolean {
+    public success(): boolean {
         return true;
     }
 
-    public isFailure(): boolean {
+    public failure(): boolean {
         return false;
     }
 
     public getSuccess(): S {
-        return this.success;
+        return this._success;
     }
 
     public getFailure(): F {
@@ -62,23 +62,23 @@ export class Success<F, S> implements Result<F, S> {
     public biMap<L, R>(successMapper: (value: S) => R, failureMapper: (value: F) => L): Result<L, R> {
         Preconditions.checkNotNull(successMapper, "successMapper cannot be null");
         Preconditions.checkNotNull(failureMapper, "failureMapper cannot be null");
-        return new Success<L, R>(successMapper(this.success));
+        return new Success<L, R>(successMapper(this._success));
     }
 
     public map<R>(mapper: (value: S) => R): Result<F, R> {
         Preconditions.checkNotNull(mapper, "mapper cannot be null");
-        return new Success<F, R>(mapper(this.success));
+        return new Success<F, R>(mapper(this._success));
     }
 
     public mapFailure<L>(mapper: (value: F) => L): Result<L, S> {
         Preconditions.checkNotNull(mapper, "mapper cannot be null");
-        return new Success<L, S>(this.success);
+        return new Success<L, S>(this._success);
     }
 
     public peek(successConsumer: (value: S) => void, failureConsumer: (value: F) => void): Result<F, S> {
         Preconditions.checkNotNull(successConsumer, "successConsumer cannot be null");
         Preconditions.checkNotNull(failureConsumer, "failureConsumer cannot be null");
-        successConsumer(this.success);
+        successConsumer(this._success);
         return this;
     }
 
@@ -95,18 +95,18 @@ export class Success<F, S> implements Result<F, S> {
     public ifSuccessOrElse<R>(successMapping: (value: S) => R, failureMapping: (value: F) => R): R {
         Preconditions.checkNotNull(successMapping, "successMapping cannot be null");
         Preconditions.checkNotNull(failureMapping, "failureMapping cannot be null");
-        return successMapping(this.success);
+        return successMapping(this._success);
     }
 
     public flatMap<R>(mapping: (value: S) => Result<F, R>): Result<F, R> {
         Preconditions.checkNotNull(mapping, "mapping cannot be null");
-        return mapping(this.success);
+        return mapping(this._success);
     }
 
     public fold<U>(leftMapper: (value: F) => U, rightMapper: (value: S) => U): U {
         Preconditions.checkNotNull(leftMapper, "leftMapper cannot be null");
         Preconditions.checkNotNull(rightMapper, "rightMapper cannot be null");
-        return rightMapper(this.success);
+        return rightMapper(this._success);
     }
 
     public combine<FAILURE, SUCCESS>(
@@ -117,8 +117,8 @@ export class Success<F, S> implements Result<F, S> {
         Preconditions.checkNotNull(secondResult, "secondResult cannot be null");
         Preconditions.checkNotNull(failureCombiner, "failureCombiner cannot be null");
         Preconditions.checkNotNull(successCombiner, "successCombiner cannot be null");
-        if (secondResult.isSuccess()) {
-            return new Success<FAILURE, SUCCESS>(successCombiner(this.success, secondResult.getSuccess()));
+        if (secondResult.success()) {
+            return new Success<FAILURE, SUCCESS>(successCombiner(this._success, secondResult.getSuccess()));
         } else {
             return new Failure<FAILURE, SUCCESS>(failureCombiner(null, secondResult.getFailure()));
         }
@@ -127,17 +127,17 @@ export class Success<F, S> implements Result<F, S> {
 
 export class Failure<F, S> implements Result<F, S> {
 
-    private readonly failure: F;
+    private readonly _failure: F;
 
     constructor(failure: F) {
-        this.failure = failure;
+        this._failure = failure;
     }
 
-    public isSuccess(): boolean {
+    public success(): boolean {
         return false;
     }
 
-    public isFailure(): boolean {
+    public failure(): boolean {
         return true;
     }
 
@@ -146,29 +146,29 @@ export class Failure<F, S> implements Result<F, S> {
     }
 
     public getFailure(): F {
-        return this.failure;
+        return this._failure;
     }
 
     public biMap<L, R>(successMapper: (value: S) => R, failureMapper: (value: F) => L): Result<L, R> {
         Preconditions.checkNotNull(successMapper, "successMapper cannot be null");
         Preconditions.checkNotNull(failureMapper, "failureMapper cannot be null");
-        return new Failure<L, R>(failureMapper(this.failure));
+        return new Failure<L, R>(failureMapper(this._failure));
     }
 
     public map<R>(mapper: (value: S) => R): Result<F, R> {
         Preconditions.checkNotNull(mapper, "mapper cannot be null");
-        return new Failure<F, R>(this.failure);
+        return new Failure<F, R>(this._failure);
     }
 
     public mapFailure<L>(mapper: (value: F) => L): Result<L, S> {
         Preconditions.checkNotNull(mapper, "mapper cannot be null");
-        return new Failure<L, S>(mapper(this.failure));
+        return new Failure<L, S>(mapper(this._failure));
     }
 
     public peek(successConsumer: (value: S) => void, failureConsumer: (value: F) => void): Result<F, S> {
         Preconditions.checkNotNull(successConsumer, "successConsumer cannot be null");
         Preconditions.checkNotNull(failureConsumer, "failureConsumer cannot be null");
-        failureConsumer(this.failure);
+        failureConsumer(this._failure);
         return this;
     }
 
@@ -185,7 +185,7 @@ export class Failure<F, S> implements Result<F, S> {
     public ifSuccessOrElse<R>(successMapping: (value: S) => R, failureMapping: (value: F) => R): R {
         Preconditions.checkNotNull(successMapping, "successMapping cannot be null");
         Preconditions.checkNotNull(failureMapping, "failureMapping cannot be null");
-        return failureMapping(this.failure);
+        return failureMapping(this._failure);
     }
 
     public flatMap<R>(mapping: (value: S) => Result<F, R>): Result<F, R> {
@@ -196,7 +196,7 @@ export class Failure<F, S> implements Result<F, S> {
     public fold<U>(leftMapper: (value: F) => U, rightMapper: (value: S) => U): U {
         Preconditions.checkNotNull(leftMapper, "leftMapper cannot be null");
         Preconditions.checkNotNull(rightMapper, "rightMapper cannot be null");
-        return leftMapper(this.failure);
+        return leftMapper(this._failure);
     }
 
     public combine<FAILURE, SUCCESS>(
@@ -208,7 +208,7 @@ export class Failure<F, S> implements Result<F, S> {
         Preconditions.checkNotNull(failureCombiner, "failureCombiner cannot be null");
         Preconditions.checkNotNull(successCombiner, "successCombiner cannot be null");
         return new Failure<FAILURE, SUCCESS>(
-            failureCombiner(this.failure, secondResult.isFailure() ? secondResult.getFailure() : null)
+            failureCombiner(this._failure, secondResult.failure() ? secondResult.getFailure() : null)
         );
     }
 }
@@ -231,22 +231,22 @@ export class CompositeResult<F, S> {
 
     public accumulate(newResult: Result<F, S>): CompositeResult<F, S> {
         Preconditions.checkNotNull(newResult, "newResult cannot be null");
-        if (this.result.isFailure()) {
+        if (this.result.failure()) {
             return this;
         }
-        if (newResult.isFailure()) {
+        if (newResult.failure()) {
             return CompositeResult.fromFailure<F, S>(newResult.getFailure());
         }
         const accumulated: S[] = [...this.result.getSuccess(), newResult.getSuccess()];
         return new CompositeResult<F, S>(new Success<F, S[]>(accumulated));
     }
 
-    public isSuccess(): boolean {
-        return this.result.isSuccess();
+    public success(): boolean {
+        return this.result.success();
     }
 
-    public isFailure(): boolean {
-        return this.result.isFailure();
+    public failure(): boolean {
+        return this.result.failure();
     }
 
     public toResult(): Result<F, S[]> {
@@ -272,10 +272,10 @@ export class CompositeSetResult<F, S> {
 
     public accumulate(newResult: Result<F, S>): CompositeSetResult<F, S> {
         Preconditions.checkNotNull(newResult, "newResult cannot be null");
-        if (this.result.isFailure()) {
+        if (this.result.failure()) {
             return this;
         }
-        if (newResult.isFailure()) {
+        if (newResult.failure()) {
             return CompositeSetResult.fromFailure<F, S>(newResult.getFailure());
         }
         const accumulated: Set<S> = new Set<S>(this.result.getSuccess());
@@ -283,12 +283,12 @@ export class CompositeSetResult<F, S> {
         return new CompositeSetResult<F, S>(new Success<F, Set<S>>(accumulated));
     }
 
-    public isSuccess(): boolean {
-        return this.result.isSuccess();
+    public success(): boolean {
+        return this.result.success();
     }
 
-    public isFailure(): boolean {
-        return this.result.isFailure();
+    public failure(): boolean {
+        return this.result.failure();
     }
 
     public toResult(): Result<F, Set<S>> {

@@ -38,7 +38,7 @@ describe('TelcoBonusScenarios', () => {
             .compensatingExpired(bonusEntryId).withCompensationAccount(expiredBonuses).build();
 
         expect(compensation).not.toBeNull();
-        expect(facade.executeSingle(compensation!).isSuccess()).toBe(true);
+        expect(facade.executeSingle(compensation!).success()).toBe(true);
         expect(facade.balance(bonusMinutes)!.equals(Money.zeroPln())).toBe(true);
         expect(facade.balance(expiredBonuses)!.equals(Money.pln(50))).toBe(true);
     });
@@ -64,7 +64,7 @@ describe('TelcoBonusScenarios', () => {
             .compensatingExpired(bonusEntryId).withCompensationAccount(expiredBonuses).build();
 
         expect(compensation).not.toBeNull();
-        expect(facade.executeSingle(compensation!).isSuccess()).toBe(true);
+        expect(facade.executeSingle(compensation!).success()).toBe(true);
         expect(facade.balance(bonusAccount)!.equals(Money.zeroPln())).toBe(true);
         expect(facade.balance(expiredBonuses)!.equals(Money.pln(60))).toBe(true);
     });
@@ -93,7 +93,7 @@ describe('TelcoBonusScenarios', () => {
             .compensatingExpired(expiringEntryId).withCompensationAccount(expiredBonuses).build();
 
         expect(compensation).not.toBeNull();
-        expect(facade.executeSingle(compensation!).isSuccess()).toBe(true);
+        expect(facade.executeSingle(compensation!).success()).toBe(true);
         expect(facade.balance(bonusAccount)!.equals(Money.pln(70))).toBe(true);
         expect(facade.balance(expiredBonuses)!.equals(Money.pln(10))).toBe(true);
     });

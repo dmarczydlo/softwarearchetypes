@@ -30,7 +30,7 @@ describe('Medical Appointment Scenarios (Temporal)', () => {
             facade.register(slot);
             const booking = TemporalLockRequest.indefinite(DR_KOWALSKI, morningSlot, PATIENT_ANNA);
             const result = facade.lockTemporal(DR_KOWALSKI, booking);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(facade.isAvailable(slot.id())).toBe(false);
         });
 
@@ -40,7 +40,7 @@ describe('Medical Appointment Scenarios (Temporal)', () => {
             facade.register(slot);
             facade.lockTemporal(DR_KOWALSKI, TemporalLockRequest.indefinite(DR_KOWALSKI, tenOClock, PATIENT_ANNA));
             const result = facade.lockTemporal(DR_KOWALSKI, TemporalLockRequest.indefinite(DR_KOWALSKI, tenOClock, PATIENT_TOMEK));
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('not available');
         });
 
@@ -52,8 +52,8 @@ describe('Medical Appointment Scenarios (Temporal)', () => {
             facade.register(nowakSlot);
             const annaResult = facade.lockTemporal(DR_KOWALSKI, TemporalLockRequest.indefinite(DR_KOWALSKI, nineOClock, PATIENT_ANNA));
             const tomekResult = facade.lockTemporal(DR_NOWAK, TemporalLockRequest.indefinite(DR_NOWAK, nineOClock, PATIENT_TOMEK));
-            expect(annaResult.isSuccess()).toBe(true);
-            expect(tomekResult.isSuccess()).toBe(true);
+            expect(annaResult.success()).toBe(true);
+            expect(tomekResult.success()).toBe(true);
         });
     });
 
@@ -64,7 +64,7 @@ describe('Medical Appointment Scenarios (Temporal)', () => {
             facade.register(availability);
             const bookingId = facade.lockTemporal(DR_KOWALSKI, TemporalLockRequest.indefinite(DR_KOWALSKI, slot, PATIENT_ANNA)).getSuccess();
             const result = facade.unlock(availability.id(), UnlockRequest.of(PATIENT_ANNA, bookingId));
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(facade.isAvailable(availability.id())).toBe(true);
         });
 
@@ -74,7 +74,7 @@ describe('Medical Appointment Scenarios (Temporal)', () => {
             facade.register(availability);
             const bookingId = facade.lockTemporal(DR_KOWALSKI, TemporalLockRequest.indefinite(DR_KOWALSKI, slot, PATIENT_ANNA)).getSuccess();
             const result = facade.unlock(availability.id(), UnlockRequest.of(PATIENT_TOMEK, bookingId));
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('not the owner');
         });
     });
@@ -102,7 +102,7 @@ describe('Medical Equipment Scenarios (Individual)', () => {
             facade.register(mri);
             const request = IndividualLockRequest.indefinite(MRI_SCANNER, RADIOLOGY_DEPT);
             const result = facade.lockIndividual(MRI_SCANNER, request);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(facade.isAvailable(mri.id())).toBe(false);
         });
 
@@ -111,7 +111,7 @@ describe('Medical Equipment Scenarios (Individual)', () => {
             facade.register(mri);
             facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, RADIOLOGY_DEPT));
             const result = facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, CARDIOLOGY_DEPT));
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('not available');
         });
 
@@ -125,9 +125,9 @@ describe('Medical Equipment Scenarios (Individual)', () => {
             const radiologyResult = facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, RADIOLOGY_DEPT));
             const cardiologyResult = facade.lockIndividual(ULTRASOUND_MACHINE, IndividualLockRequest.indefinite(ULTRASOUND_MACHINE, CARDIOLOGY_DEPT));
             const emergencyResult = facade.lockIndividual(PORTABLE_XRAY, IndividualLockRequest.indefinite(PORTABLE_XRAY, EMERGENCY_DEPT));
-            expect(radiologyResult.isSuccess()).toBe(true);
-            expect(cardiologyResult.isSuccess()).toBe(true);
-            expect(emergencyResult.isSuccess()).toBe(true);
+            expect(radiologyResult.success()).toBe(true);
+            expect(cardiologyResult.success()).toBe(true);
+            expect(emergencyResult.success()).toBe(true);
         });
     });
 
@@ -137,7 +137,7 @@ describe('Medical Equipment Scenarios (Individual)', () => {
             facade.register(mri);
             const reservation = facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, RADIOLOGY_DEPT)).getSuccess();
             const result = facade.unlock(mri.id(), UnlockRequest.of(RADIOLOGY_DEPT, reservation));
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(facade.isAvailable(mri.id())).toBe(true);
         });
 
@@ -147,7 +147,7 @@ describe('Medical Equipment Scenarios (Individual)', () => {
             const reservation = facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, RADIOLOGY_DEPT)).getSuccess();
             facade.unlock(mri.id(), UnlockRequest.of(RADIOLOGY_DEPT, reservation));
             const result = facade.lockIndividual(MRI_SCANNER, IndividualLockRequest.indefinite(MRI_SCANNER, CARDIOLOGY_DEPT));
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
         });
     });
 });

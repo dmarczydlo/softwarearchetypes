@@ -23,7 +23,7 @@ describe('TemporalResourceAvailability', () => {
         const room = TemporalResourceAvailability.create(ROOM_101, jan15);
         const request = TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE);
         const result = room.lock(request);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(room.isAvailable()).toBe(false);
     });
 
@@ -32,7 +32,7 @@ describe('TemporalResourceAvailability', () => {
         const room = TemporalResourceAvailability.create(ROOM_101, jan15);
         room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE));
         const result = room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, BOB));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('same owner can relock slot', () => {
@@ -40,7 +40,7 @@ describe('TemporalResourceAvailability', () => {
         const room = TemporalResourceAvailability.create(ROOM_101, jan15);
         room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE));
         const result = room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
 
     it('owner can unlock slot', () => {
@@ -49,7 +49,7 @@ describe('TemporalResourceAvailability', () => {
         const lockResult = room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE));
         const blockadeId = lockResult.getSuccess();
         const unlockResult = room.unlock(UnlockRequest.of(ALICE, blockadeId));
-        expect(unlockResult.isSuccess()).toBe(true);
+        expect(unlockResult.success()).toBe(true);
         expect(room.isAvailable()).toBe(true);
     });
 
@@ -59,7 +59,7 @@ describe('TemporalResourceAvailability', () => {
         const lockResult = room.lock(TemporalLockRequest.indefinite(ROOM_101, jan15, ALICE));
         const blockadeId = lockResult.getSuccess();
         const unlockResult = room.unlock(UnlockRequest.of(BOB, blockadeId));
-        expect(unlockResult.isFailure()).toBe(true);
+        expect(unlockResult.failure()).toBe(true);
         expect(room.isAvailable()).toBe(false);
     });
 });

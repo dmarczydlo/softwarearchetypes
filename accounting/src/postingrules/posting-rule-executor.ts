@@ -31,7 +31,7 @@ export class PostingRuleExecutor {
             if (rule.isEligible(context)) {
                 for (const tx of rule.execute(context)) {
                     const accumulated = compositeResult.accumulate(transactionExecutor(tx));
-                    if (accumulated.isFailure()) {
+                    if (accumulated.failure()) {
                         return accumulated.toResult();
                     }
                 }

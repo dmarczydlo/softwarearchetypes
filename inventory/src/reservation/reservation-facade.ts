@@ -37,7 +37,7 @@ export class ReservationFacade {
         );
 
         const lockResult = this.inventoryFacade.handleLock(lockCmd);
-        if (lockResult.isFailure()) {
+        if (lockResult.failure()) {
             return ResultFactory.failure(lockResult.getFailure());
         }
 

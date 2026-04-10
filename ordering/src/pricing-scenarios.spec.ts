@@ -36,15 +36,15 @@ describe('PricingScenarios', () => {
 
         const result = facade.handlePriceOrder(new PriceOrderCommand(order.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const priced = result.getSuccess();
         expect(priced.lines[0].pricingType).toBe("CalculatedPricing");
-        expect(priced.lines[0].unitPrice).toBe("100 PLN");
-        expect(priced.lines[0].totalPrice).toBe("200 PLN");
+        expect(priced.lines[0].unitPrice).toBe("PLN 100");
+        expect(priced.lines[0].totalPrice).toBe("PLN 200");
         expect(priced.lines[1].pricingType).toBe("CalculatedPricing");
-        expect(priced.lines[1].unitPrice).toBe("100 PLN");
-        expect(priced.lines[1].totalPrice).toBe("200 PLN");
-        expect(priced.totalPrice).toBe("400 PLN");
+        expect(priced.lines[1].unitPrice).toBe("PLN 100");
+        expect(priced.lines[1].totalPrice).toBe("PLN 200");
+        expect(priced.totalPrice).toBe("PLN 400");
     });
 
     it('should send productId and quantity in pricing context', () => {
@@ -82,13 +82,13 @@ describe('PricingScenarios', () => {
 
         const result = facade.handlePriceOrder(new PriceOrderCommand(order.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const priced = result.getSuccess();
-        expect(priced.lines[0].unitPrice).toBe("1000 PLN");
-        expect(priced.lines[0].totalPrice).toBe("2000 PLN");
-        expect(priced.lines[1].unitPrice).toBe("50 PLN");
-        expect(priced.lines[1].totalPrice).toBe("150 PLN");
-        expect(priced.totalPrice).toBe("2150 PLN");
+        expect(priced.lines[0].unitPrice).toBe("PLN 1000");
+        expect(priced.lines[0].totalPrice).toBe("PLN 2000");
+        expect(priced.lines[1].unitPrice).toBe("PLN 50");
+        expect(priced.lines[1].totalPrice).toBe("PLN 150");
+        expect(priced.totalPrice).toBe("PLN 2150");
     });
 
     it('should set arbitrary price on order line', () => {
@@ -104,11 +104,11 @@ describe('PricingScenarios', () => {
             "PLN", "Manager override"
         ));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const updated = result.getSuccess();
         expect(updated.lines[0].pricingType).toBe("ArbitraryPricing");
-        expect(updated.lines[0].unitPrice).toBe("99.99 PLN");
-        expect(updated.lines[0].totalPrice).toBe("99.99 PLN");
+        expect(updated.lines[0].unitPrice).toBe("PLN 99.99");
+        expect(updated.lines[0].totalPrice).toBe("PLN 99.99");
         expect(updated.lines[0].breakdown).toHaveLength(0);
     });
 
@@ -122,10 +122,10 @@ describe('PricingScenarios', () => {
 
         const result = facade.handlePriceOrder(new PriceOrderCommand(order.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines[0].pricingType).toBe("EstimatedPricing");
-        expect(result.getSuccess().lines[0].unitPrice).toBe("500 PLN");
-        expect(result.getSuccess().lines[0].totalPrice).toBe("500 PLN");
+        expect(result.getSuccess().lines[0].unitPrice).toBe("PLN 500");
+        expect(result.getSuccess().lines[0].totalPrice).toBe("PLN 500");
     });
 
     it('should reset pricing to not priced yet when quantity changes', () => {
@@ -141,7 +141,7 @@ describe('PricingScenarios', () => {
         const result = facade.handleChangeOrderLineQuantity(
             new ChangeOrderLineQuantityCommand(order.id, lineId, 5, "pcs"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines[0].pricingType).toBe("NotPricedYet");
         expect(result.getSuccess().lines[0].unitPrice).toBeNull();
         expect(result.getSuccess().totalPrice).toBeNull();
@@ -159,9 +159,9 @@ describe('PricingScenarios', () => {
 
         const confirmResult = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
-        expect(confirmResult.isSuccess()).toBe(true);
+        expect(confirmResult.success()).toBe(true);
         expect(confirmResult.getSuccess().status).toBe("CONFIRMED");
-        expect(confirmResult.getSuccess().totalPrice).toBe("2000 PLN");
+        expect(confirmResult.getSuccess().totalPrice).toBe("PLN 2000");
     });
 
     it('should preserve breakdown components after pricing', () => {
@@ -180,15 +180,15 @@ describe('PricingScenarios', () => {
 
         const result = facade.handlePriceOrder(new PriceOrderCommand(order.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const line = result.getSuccess().lines[0];
         expect(line.pricingType).toBe("CalculatedPricing");
-        expect(line.totalPrice).toBe("300 PLN");
+        expect(line.totalPrice).toBe("PLN 300");
         expect(line.breakdown).toHaveLength(2);
         expect(line.breakdown[0].componentName).toBe("base");
-        expect(line.breakdown[0].amount).toBe("250 PLN");
+        expect(line.breakdown[0].amount).toBe("PLN 250");
         expect(line.breakdown[1].componentName).toBe("warranty");
-        expect(line.breakdown[1].amount).toBe("50 PLN");
+        expect(line.breakdown[1].amount).toBe("PLN 50");
     });
 
     it('should call pricing service once per line', () => {
@@ -216,7 +216,7 @@ describe('PricingScenarios', () => {
             ],
             [new OrderLineData(productId, quantity, "pcs", {}, [])]
         ));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         return result.getSuccess();
     }
 
@@ -233,7 +233,7 @@ describe('PricingScenarios', () => {
                 new OrderLineData("MOUSE-1", 3, "pcs", {}, [])
             ]
         ));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         return result.getSuccess();
     }
 });

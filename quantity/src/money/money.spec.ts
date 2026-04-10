@@ -223,11 +223,11 @@ describe("Money", () => {
     describe("toString", () => {
 
         it("should return string representation", () => {
-            expect(Money.pln(100).toString()).toBe("100 PLN");
+            expect(Money.pln(100).toString()).toBe("PLN 100");
         });
 
         it("should include decimals", () => {
-            expect(Money.pln(10.50).toString()).toBe("10.5 PLN");
+            expect(Money.pln(10.50).toString()).toBe("PLN 10.5");
         });
     });
 

@@ -102,12 +102,12 @@ describe('TransactionScenarios', () => {
         const toBeReversedTx = transactionBuilderFactory.transaction()
             .occurredAt(TUESDAY_10_00).appliesAt(TUESDAY_11_00).withTypeOf("opening_balance").executing()
             .creditTo(jan.id(), Money.pln(50)).debitFrom(maria.id(), Money.pln(50)).debitFrom(rokita.id(), Money.pln(20)).build();
-        expect(facade.executeSingle(toBeReversedTx).isSuccess()).toBe(true);
+        expect(facade.executeSingle(toBeReversedTx).success()).toBe(true);
 
         const revertingTx = transactionBuilderFactory.transaction()
             .occurredAt(TUESDAY_12_00).appliesAt(TUESDAY_12_00).reverting(toBeReversedTx.id()).build();
         const result = facade.executeSingle(revertingTx);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(revertingTx.type().value).toBe(TransactionType.REVERSAL.value);
     });
 
@@ -228,7 +228,7 @@ describe('TransactionScenarios', () => {
         const originalTransaction = transactionBuilderFactory.transaction()
             .occurredAt(TUESDAY_10_00).appliesAt(TUESDAY_11_00).withTypeOf("original").executing()
             .creditTo(jan.id(), Money.pln(100)).debitFrom(maria.id(), Money.pln(100)).build();
-        expect(facade.executeSingle(originalTransaction).isSuccess()).toBe(true);
+        expect(facade.executeSingle(originalTransaction).success()).toBe(true);
 
         const originalEntryId = Array.from(originalTransaction.entries().values()).flat()
             .filter(e => isAccountCredited(e)).map(e => e.id())[0];
@@ -274,7 +274,7 @@ describe('TransactionScenarios', () => {
         const originalTransaction = transactionBuilderFactory.transaction()
             .occurredAt(TUESDAY_10_00).appliesAt(TUESDAY_10_00).withTypeOf("credit_with_expiry").executing()
             .creditTo(creditAccount.id(), Money.pln(100), expiredValidity).debitFrom(offsetAccount.id(), Money.pln(100)).build();
-        expect(facade.executeSingle(originalTransaction).isSuccess()).toBe(true);
+        expect(facade.executeSingle(originalTransaction).success()).toBe(true);
 
         const expiredEntryId = Array.from(originalTransaction.entries().values()).flat()
             .filter(e => e.validity().equals(expiredValidity)).map(e => e.id())[0];
@@ -296,7 +296,7 @@ describe('TransactionScenarios', () => {
         const originalTransaction = transactionBuilderFactory.transaction()
             .occurredAt(TUESDAY_10_00).appliesAt(TUESDAY_10_00).withTypeOf("credit_with_validity").executing()
             .creditTo(creditAccount.id(), Money.pln(100), validValidity).debitFrom(offsetAccount.id(), Money.pln(100)).build();
-        expect(facade.executeSingle(originalTransaction).isSuccess()).toBe(true);
+        expect(facade.executeSingle(originalTransaction).success()).toBe(true);
 
         const validEntryId = Array.from(originalTransaction.entries().values()).flat()
             .filter(e => e.validity().equals(validValidity)).map(e => e.id())[0];

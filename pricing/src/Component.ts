@@ -1,5 +1,6 @@
 import { Money } from "@softwarearchetypes/quantity";
 import { Calculator } from "./Calculator.js";
+import { requiredCalculationFields } from "./CalculatorType.js";
 import { ComponentBreakdown } from "./ComponentBreakdown.js";
 import { ComponentId } from "./ComponentId.js";
 import { CompositeComponentVersion } from "./CompositeComponentVersion.js";
@@ -142,8 +143,7 @@ export class SimpleComponent implements Component {
         if (firstVersion.parameterMappings.size > 0) {
             return new Set(firstVersion.parameterMappings.keys());
         }
-        return firstVersion.calculator.getType() ?
-            (new Set()) : new Set();
+        return requiredCalculationFields(firstVersion.calculator.getType());
     }
 
     private versionAt(time: Date): SimpleComponentVersion {

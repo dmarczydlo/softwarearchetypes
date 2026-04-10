@@ -58,7 +58,7 @@ describe('ReservationFacade', () => {
             .resourceSpecification(IndividualSpecification.of(instanceId))
             .build();
         const result = reservationFacade.handle(request);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const view = reservationFacade.findById(result.getSuccess());
         expect(view).not.toBeNull();
         expect(view!.owner.equals(GUEST_ALICE)).toBe(true);
@@ -82,7 +82,7 @@ describe('ReservationFacade', () => {
             .purpose(ReservationPurpose.BOOKING)
             .resourceSpecification(IndividualSpecification.of(instanceId))
             .build());
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('owner can cancel reservation', () => {
@@ -97,7 +97,7 @@ describe('ReservationFacade', () => {
             .build());
         const reservationId = reserveResult.getSuccess();
         const cancelResult = reservationFacade.cancel(reservationId, GUEST_ALICE);
-        expect(cancelResult.isSuccess()).toBe(true);
+        expect(cancelResult.success()).toBe(true);
         const cancelled = reservationFacade.findById(reservationId);
         expect(cancelled).not.toBeNull();
         expect(cancelled!.status).toBe('CANCELLED');
@@ -121,7 +121,7 @@ describe('ReservationFacade', () => {
             .purpose(ReservationPurpose.BOOKING)
             .resourceSpecification(IndividualSpecification.of(instanceId))
             .build());
-        expect(bobResult.isSuccess()).toBe(true);
+        expect(bobResult.success()).toBe(true);
     });
 
     it('non-owner cannot cancel reservation', () => {
@@ -136,7 +136,7 @@ describe('ReservationFacade', () => {
             .build());
         const reservationId = reserveResult.getSuccess();
         const cancelResult = reservationFacade.cancel(reservationId, GUEST_BOB);
-        expect(cancelResult.isFailure()).toBe(true);
+        expect(cancelResult.failure()).toBe(true);
         expect(cancelResult.getFailure()).toContain('Not authorized');
     });
 

@@ -3,12 +3,12 @@ import { OrderLineSpecification } from './order-line-specification.js';
 
 describe('OrderLineSpecification', () => {
     it('features should return only plain attributes', () => {
-        const spec = OrderLineSpecification.of({
-            "color": "black",
-            "size": "XL",
-            "component.cpu": "i7",
-            "_warehouse": "warsaw"
-        });
+        const spec = OrderLineSpecification.of(new Map([
+            ["color", "black"],
+            ["size", "XL"],
+            ["component.cpu", "i7"],
+            ["_warehouse", "warsaw"]
+        ]));
 
         const features = spec.features();
 
@@ -18,11 +18,11 @@ describe('OrderLineSpecification', () => {
     });
 
     it('components should return component entries with prefix stripped', () => {
-        const spec = OrderLineSpecification.of({
-            "component.laptop": "Dell-5540",
-            "component.mouse": "Logitech-MX3",
-            "color": "black"
-        });
+        const spec = OrderLineSpecification.of(new Map([
+            ["component.laptop", "Dell-5540"],
+            ["component.mouse", "Logitech-MX3"],
+            ["color", "black"]
+        ]));
 
         const components = spec.components();
 
@@ -32,11 +32,11 @@ describe('OrderLineSpecification', () => {
     });
 
     it('preferences should return underscore-prefixed entries with prefix stripped', () => {
-        const spec = OrderLineSpecification.of({
-            "_warehouse": "warsaw-central",
-            "_deliveryDate": "2025-01-16",
-            "color": "blue"
-        });
+        const spec = OrderLineSpecification.of(new Map([
+            ["_warehouse", "warsaw-central"],
+            ["_deliveryDate", "2025-01-16"],
+            ["color", "blue"]
+        ]));
 
         const preferences = spec.preferences();
 
@@ -46,11 +46,11 @@ describe('OrderLineSpecification', () => {
     });
 
     it('mixed attributes should be correctly separated', () => {
-        const spec = OrderLineSpecification.of({
-            "color": "black",
-            "component.cpu": "i7",
-            "_warehouse": "warsaw"
-        });
+        const spec = OrderLineSpecification.of(new Map([
+            ["color", "black"],
+            ["component.cpu", "i7"],
+            ["_warehouse", "warsaw"]
+        ]));
 
         expect(spec.features().size).toBe(1);
         expect(spec.components().size).toBe(1);
@@ -58,10 +58,10 @@ describe('OrderLineSpecification', () => {
     });
 
     it('component features should be excluded from plain features', () => {
-        const spec = OrderLineSpecification.of({
-            "laptop.color": "black",
-            "ram": "16GB"
-        });
+        const spec = OrderLineSpecification.of(new Map([
+            ["laptop.color", "black"],
+            ["ram", "16GB"]
+        ]));
 
         const features = spec.features();
 

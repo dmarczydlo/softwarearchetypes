@@ -23,7 +23,7 @@ import { PartyRoleDefiningPolicies } from './party-role-defining-policy.js';
 export abstract class Party {
     readonly _partyType: string;
     private readonly _partyId: PartyId;
-    private readonly _roles: Set<string>;
+    private readonly _roles: Role[];
     private readonly _registeredIdentifiers: Set<RegisteredIdentifier>;
     private readonly _events: PartyRelatedEvent[] = [];
     private readonly _version: Version;
@@ -46,7 +46,7 @@ export abstract class Party {
 
         this._partyType = partyType;
         this._partyId = partyId;
-        this._roles = new Set([...roles].map(r => r.asString()));
+        this._roles = [...roles];
         this._version = version;
         this._identifierPolicy = identifierPolicy ?? RegisteredIdentifierDefiningPolicies.all();
         this._roleDefiningPolicy = roleDefiningPolicy ?? PartyRoleDefiningPolicies.alwaysAllow();
@@ -70,8 +70,8 @@ export abstract class Party {
     private addRole(role: Role): Result<string, Party> {
         Preconditions.checkNotNull(role, 'Role cannot be null');
         if (this._roleDefiningPolicy.canDefineFor(this, role)) {
-            if (!this._roles.has(role.asString())) {
-                this._roles.add(role.asString());
+            if (!this._roles.some(r => r.asString() === role.asString())) {
+                this._roles.push(role);
                 this._events.push(new RoleAdded(this._partyId.asString(), role.asString()));
             } else {
                 this._events.push(RoleAdditionSkipped.dueToDuplicationFor(this._partyId.asString(), role.asString()));
@@ -106,8 +106,9 @@ export abstract class Party {
 
     private removeRole(role: Role): Result<string, Party> {
         Preconditions.checkNotNull(role, 'Role cannot be null');
-        if (this._roles.has(role.asString())) {
-            this._roles.delete(role.asString());
+        const index = this._roles.findIndex(r => r.asString() === role.asString());
+        if (index >= 0) {
+            this._roles.splice(index, 1);
             this._events.push(new RoleRemoved(this._partyId.asString(), role.asString()));
         } else {
             this._events.push(RoleRemovalSkipped.dueToMissingRoleFor(this._partyId.asString(), role.asString()));
@@ -134,7 +135,7 @@ export abstract class Party {
     id(): PartyId { return this._partyId; }
 
     roles(): Set<Role> {
-        return new Set([...this._roles].map(r => Role.of(r)));
+        return new Set(this._roles);
     }
 
     version(): Version { return this._version; }

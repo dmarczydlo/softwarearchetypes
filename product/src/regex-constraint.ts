@@ -11,7 +11,7 @@ export class RegexConstraint extends BaseFeatureValueConstraint {
         super();
         Preconditions.checkArgument(pattern != null && pattern.trim().length > 0, "Pattern must be defined");
         this._patternString = pattern;
-        this._pattern = new RegExp(pattern);
+        this._pattern = new RegExp('^(?:' + pattern + ')$');
     }
 
     static of(pattern: string): RegexConstraint {

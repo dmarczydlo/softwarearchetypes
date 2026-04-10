@@ -36,7 +36,7 @@ export class ProductRelationshipsFacade {
             }
 
             const result = this.factory.defineFor(from, to, type);
-            if (result.isSuccess()) {
+            if (result.success()) {
                 this.repository.save(result.getSuccess());
                 return ResultFactory.success(result.getSuccess().id);
             }

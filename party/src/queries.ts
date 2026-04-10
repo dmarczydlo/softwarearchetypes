@@ -9,10 +9,8 @@ import { RelationshipName } from './relationship-name.js';
 import { Capability } from './capability.js';
 import { CapabilityId } from './capability-id.js';
 import { CapabilityType } from './capability-type.js';
-import type { CapabilityRequirement } from './capability-requirement.js';
 import { Address } from './address.js';
 import type { PartyRelationship } from './party-relationship.js';
-import { LocationScope, SkillLevelScope } from './operating-scope.js';
 
 export class PartiesQueries {
     private readonly partyRepository: PartyRepository;
@@ -84,33 +82,4 @@ export class CapabilitiesQueries {
         return this.repository.findByType(capType).filter(c => c.isCurrentlyValid());
     }
     findById(id: CapabilityId): Capability | null { return this.repository.findById(id); }
-
-    findPartiesWithCapability(type: CapabilityType): PartyId[] {
-        return [...new Set(this.repository.findByType(type).filter(c => c.isCurrentlyValid()).map(c => c.partyId.asString()))]
-            .map(id => PartyId.of(id));
-    }
-
-    findPartiesSatisfying(requirement: CapabilityRequirement): PartyId[] {
-        return [...new Set(this.repository.findByType(requirement.requiredType)
-            .filter(c => c.isCurrentlyValid())
-            .filter(c => c.satisfies(requirement))
-            .map(c => c.partyId.asString())
-        )].map(id => PartyId.of(id));
-    }
-
-    findPartiesAtLocation(type: CapabilityType, location: string): PartyId[] {
-        return [...new Set(this.repository.findByType(type)
-            .filter(c => c.isCurrentlyValid())
-            .filter(c => { const s = c.scope(LocationScope); return s ? s.includes(location) : false; })
-            .map(c => c.partyId.asString())
-        )].map(id => PartyId.of(id));
-    }
-
-    findPartiesWithSkillLevel(type: CapabilityType, minLevel: SkillLevelScope): PartyId[] {
-        return [...new Set(this.repository.findByType(type)
-            .filter(c => c.isCurrentlyValid())
-            .filter(c => { const s = c.scope(SkillLevelScope); return s ? s.isAtLeast(minLevel) : false; })
-            .map(c => c.partyId.asString())
-        )].map(id => PartyId.of(id));
-    }
 }

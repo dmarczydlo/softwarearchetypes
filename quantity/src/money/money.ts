@@ -36,6 +36,10 @@ export class Money {
         return new Money(amount, "USD");
     }
 
+    static onePln(): Money {
+        return Money.of(1, "PLN");
+    }
+
     static zeroPln(): Money {
         return Money.pln(0);
     }
@@ -126,13 +130,28 @@ export class Money {
         return this.amount === other.amount && this.currencyCode === other.currencyCode;
     }
 
-    toString(): string {
-        return `${this.amount} ${this.currencyCode}`;
+    currencyUnit(): string {
+        return this.currencyCode;
     }
 
-    static min(a: Money, b: Money): Money {
-        a.checkSameCurrency(b);
-        return a.amount <= b.amount ? a : b;
+    toString(): string {
+        return `${this.currencyCode} ${this.amount}`;
+    }
+
+    static absOf(money: Money): Money {
+        return money.abs();
+    }
+
+    static min(a: Money, b: Money): Money;
+    static min(moneys: Money[]): Money | null;
+    static min(aOrMoneys: Money | Money[], b?: Money): Money | null {
+        if (Array.isArray(aOrMoneys)) {
+            if (aOrMoneys.length === 0) return null;
+            return aOrMoneys.reduce((min, m) => Money.min(min, m));
+        }
+        const a = aOrMoneys;
+        a.checkSameCurrency(b!);
+        return a.amount <= b!.amount ? a : b!;
     }
 
     static max(a: Money, b: Money): Money {

@@ -17,19 +17,19 @@ function randomNumber(): number {
 describe('Result', () => {
 
     it('should be marked as success for success result', () => {
-        expect(ResultFactory.success(randomAlphabetic(10)).isSuccess()).toBe(true);
+        expect(ResultFactory.success(randomAlphabetic(10)).success()).toBe(true);
     });
 
     it('should not be marked as failure for success result', () => {
-        expect(ResultFactory.success(randomAlphabetic(10)).isFailure()).toBe(false);
+        expect(ResultFactory.success(randomAlphabetic(10)).failure()).toBe(false);
     });
 
     it('should be marked as failure for failure result', () => {
-        expect(ResultFactory.failure(randomAlphabetic(10)).isFailure()).toBe(true);
+        expect(ResultFactory.failure(randomAlphabetic(10)).failure()).toBe(true);
     });
 
     it('should not be marked as success for failure result', () => {
-        expect(ResultFactory.failure(randomAlphabetic(10)).isSuccess()).toBe(false);
+        expect(ResultFactory.failure(randomAlphabetic(10)).success()).toBe(false);
     });
 
     it('should fail to get success on failure result', () => {
@@ -197,7 +197,7 @@ describe('Result', () => {
 
         const result: Result<string, string> = ResultFactory.success<string, number>(value).map(mapper);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toBe("Value: 20");
     });
 
@@ -207,7 +207,7 @@ describe('Result', () => {
 
         const result: Result<string, string> = ResultFactory.failure<string, number>(errorMessage).map(mapper);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe(errorMessage);
     });
 
@@ -223,7 +223,7 @@ describe('Result', () => {
 
         const result: Result<string, number> = ResultFactory.failure<number, number>(errorCode).mapFailure(mapper);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe("Error 404: Not Found");
     });
 
@@ -233,7 +233,7 @@ describe('Result', () => {
 
         const result: Result<string, number> = ResultFactory.success<number, number>(value).mapFailure(mapper);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toBe(value);
     });
 
@@ -249,7 +249,7 @@ describe('Result', () => {
 
         const result: Result<string, number> = ResultFactory.success<string, number>(value).flatMap(mapper);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toBe(10);
     });
 
@@ -260,7 +260,7 @@ describe('Result', () => {
 
         const result: Result<string, number> = ResultFactory.success<string, number>(value).flatMap(mapper);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe(errorMessage);
     });
 
@@ -270,7 +270,7 @@ describe('Result', () => {
 
         const result: Result<string, number> = ResultFactory.failure<string, number>(errorMessage).flatMap(mapper);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe(errorMessage);
     });
 
@@ -399,7 +399,7 @@ describe('CompositeResult', () => {
         const composite: CompositeResult<string, number> = ResultFactory.composite();
         const result: Result<string, number[]> = composite.toResult();
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toEqual([]);
     });
 
@@ -412,7 +412,7 @@ describe('CompositeResult', () => {
             .accumulate(ResultFactory.success(3))
             .toResult();
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toEqual([1, 2, 3]);
     });
 
@@ -425,7 +425,7 @@ describe('CompositeResult', () => {
             .accumulate(ResultFactory.success(3))
             .toResult();
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe("Error occurred");
     });
 
@@ -438,7 +438,7 @@ describe('CompositeResult', () => {
             .accumulate(ResultFactory.success(2))
             .toResult();
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe("First error");
     });
 
@@ -453,8 +453,8 @@ describe('CompositeResult', () => {
             .accumulate(ResultFactory.success(1))
             .accumulate(ResultFactory.success(2));
 
-        expect(composite.isSuccess()).toBe(true);
-        expect(composite.isFailure()).toBe(false);
+        expect(composite.success()).toBe(true);
+        expect(composite.failure()).toBe(false);
     });
 
     it('should return true for failure on composite result', () => {
@@ -462,8 +462,8 @@ describe('CompositeResult', () => {
             .accumulate(ResultFactory.success(1))
             .accumulate(ResultFactory.failure("Error"));
 
-        expect(composite.isFailure()).toBe(true);
-        expect(composite.isSuccess()).toBe(false);
+        expect(composite.failure()).toBe(true);
+        expect(composite.success()).toBe(false);
     });
 });
 
@@ -473,7 +473,7 @@ describe('CompositeSetResult', () => {
         const composite: CompositeSetResult<string, number> = ResultFactory.compositeSet();
         const result: Result<string, Set<number>> = composite.toResult();
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().size).toBe(0);
     });
 
@@ -486,7 +486,7 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(3))
             .toResult();
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toEqual(new Set([1, 2, 3]));
     });
 
@@ -499,7 +499,7 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(3))
             .toResult();
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe("Error occurred");
     });
 
@@ -512,7 +512,7 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(2))
             .toResult();
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe("First error");
     });
 
@@ -526,7 +526,7 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(3))
             .toResult();
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toEqual(new Set([1, 2, 3]));
     });
 
@@ -541,8 +541,8 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(1))
             .accumulate(ResultFactory.success(2));
 
-        expect(composite.isSuccess()).toBe(true);
-        expect(composite.isFailure()).toBe(false);
+        expect(composite.success()).toBe(true);
+        expect(composite.failure()).toBe(false);
     });
 
     it('should return true for failure on composite set result', () => {
@@ -550,7 +550,7 @@ describe('CompositeSetResult', () => {
             .accumulate(ResultFactory.success(1))
             .accumulate(ResultFactory.failure("Error"));
 
-        expect(composite.isFailure()).toBe(true);
-        expect(composite.isSuccess()).toBe(false);
+        expect(composite.failure()).toBe(true);
+        expect(composite.success()).toBe(false);
     });
 });

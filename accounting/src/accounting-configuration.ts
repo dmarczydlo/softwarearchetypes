@@ -1,6 +1,6 @@
 import { EventPublisher, InMemoryEventsPublisher } from '@softwarearchetypes/common';
 import { AccountRepository, InMemoryAccountRepo } from './account-repository.js';
-import { AccountingFacade } from './accounting-facade.js';
+import { AccountingFacade, AccountViewQueries } from './accounting-facade.js';
 import { EntryAllocations } from './entry-allocations.js';
 import { InMemoryEntryRepository, EntryRepository } from './entry-repository.js';
 import { TransactionBuilderFactory } from './transaction-builder-factory.js';
@@ -37,7 +37,8 @@ export class AccountingConfiguration {
         const transactionRepository: TransactionRepository = new InMemoryTransactionRepo();
         const transactionBuilderFactory = new TransactionBuilderFactory(accountRepository, transactionRepository, entryAllocations, entryRepository, clock);
         const eventPublisher: EventPublisher = new InMemoryEventsPublisher();
-        const accountingFacade = AccountingFacade.createWithQueries(clock, accountRepository, entryRepository, transactionRepository, transactionBuilderFactory, eventPublisher);
+        const accountViewQueries = new AccountViewQueries(accountRepository, entryRepository);
+        const accountingFacade = new AccountingFacade(clock, accountRepository, accountViewQueries, transactionRepository, transactionBuilderFactory, eventPublisher);
         return new AccountingConfiguration(clock, accountRepository, transactionRepository, transactionBuilderFactory, eventPublisher, accountingFacade);
     }
 

@@ -34,7 +34,7 @@ export class AddressesFacade {
         const addresses = this.repository.findFor(command.partyId) ?? Addresses.emptyAddressesFor(command.partyId);
         return addresses.addOrUpdate(geoAddress)
             .peekSuccess(a => this.repository.save(a))
-            .peekSuccess(a => this.publisher.publishAll(a.publishedEvents()))
+            .peekSuccess(a => this.publisher.publish(a.publishedEvents()))
             .map(() => geoAddress.id());
     }
 
@@ -42,7 +42,7 @@ export class AddressesFacade {
         const addresses = this.repository.findFor(command.partyId) ?? Addresses.emptyAddressesFor(command.partyId);
         return addresses.removeAddressWith(command.addressId)
             .peekSuccess(a => this.repository.save(a))
-            .peekSuccess(a => this.publisher.publishAll(a.publishedEvents()))
+            .peekSuccess(a => this.publisher.publish(a.publishedEvents()))
             .map(() => command.addressId);
     }
 }

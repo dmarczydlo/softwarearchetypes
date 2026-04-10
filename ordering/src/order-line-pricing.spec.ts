@@ -99,7 +99,7 @@ describe('OrderLinePricing', () => {
             result = "unknown";
         }
 
-        expect(result).toBe("calculated: 30 PLN");
+        expect(result).toBe("calculated: PLN 30");
     });
 
     it('should preserve breakdown in estimated pricing', () => {

@@ -46,7 +46,7 @@ describe("ProductCatalog", () => {
         const laptop = thereIsProduct("Business Laptop");
         const result = catalog.handleAddToOffer(new AddToOffer(laptop.id().toString(), "Premium Laptop", "High-end business laptop", new Set(["electronics"]), null, null, {}));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const found = catalog.findByCatalogEntryId(new FindCatalogEntryCriteria(result.getSuccess().value))!;
         expect(found.displayName).toBe("Premium Laptop");
         expect(found.productTypeId).toBe(laptop.id().toString());
@@ -55,7 +55,7 @@ describe("ProductCatalog", () => {
     it("should fail to add non-existent product to offer", () => {
         const nonExistent = UuidProductIdentifier.random();
         const result = catalog.handleAddToOffer(new AddToOffer(nonExistent.toString(), "Ghost Product", "Does not exist", new Set(), null, null, {}));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toContain("not found");
     });
 
@@ -132,7 +132,7 @@ describe("ProductCatalog", () => {
 
         const result = catalog.handleDiscontinueProduct(new DiscontinueProduct(entryId.value, "2024-06-30"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const updated = catalog.findByCatalogEntryId(new FindCatalogEntryCriteria(entryId.value))!;
         expect(updated.availableUntil).toBe("2024-06-30");
     });
@@ -143,7 +143,7 @@ describe("ProductCatalog", () => {
 
         const result = catalog.handleUpdateMetadata(new UpdateMetadata(entryId.value, { featured: "true", badge: "sale" }));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const updated = catalog.findByCatalogEntryId(new FindCatalogEntryCriteria(entryId.value))!;
         expect(updated.metadata.get("featured")).toBe("true");
         expect(updated.metadata.get("badge")).toBe("sale");

@@ -74,7 +74,7 @@ export class PartiesFacade {
         const result = party.add(role);
         return result
             .peekSuccess(() => this.partyRepository.save(party))
-            .peekSuccess(() => this.eventPublisher.publishAll(party.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(party.publishedEvents()))
             .map(() => party.id());
     }
 
@@ -85,7 +85,7 @@ export class PartiesFacade {
         const result = party.remove(role);
         return result
             .peekSuccess(() => this.partyRepository.save(party))
-            .peekSuccess(() => this.eventPublisher.publishAll(party.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(party.publishedEvents()))
             .map(() => party.id());
     }
 
@@ -95,7 +95,7 @@ export class PartiesFacade {
         const result = party.add(command.registeredIdentifier);
         return result
             .peekSuccess(() => this.partyRepository.save(party))
-            .peekSuccess(() => this.eventPublisher.publishAll(party.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(party.publishedEvents()))
             .map(() => party.id());
     }
 
@@ -105,7 +105,7 @@ export class PartiesFacade {
         const result = party.remove(command.registeredIdentifier);
         return result
             .peekSuccess(() => this.partyRepository.save(party))
-            .peekSuccess(() => this.eventPublisher.publishAll(party.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(party.publishedEvents()))
             .map(() => party.id());
     }
 
@@ -117,7 +117,7 @@ export class PartiesFacade {
         const result = person.update(personalData);
         return result
             .peekSuccess(() => this.partyRepository.save(person))
-            .peekSuccess(() => this.eventPublisher.publishAll(person.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(person.publishedEvents()))
             .map(PartyViewMapper.toView);
     }
 
@@ -129,7 +129,7 @@ export class PartiesFacade {
         const result = org.updateName(organizationName);
         return result
             .peekSuccess(() => this.partyRepository.save(org))
-            .peekSuccess(() => this.eventPublisher.publishAll(org.publishedEvents()))
+            .peekSuccess(() => this.eventPublisher.publish(org.publishedEvents()))
             .map(PartyViewMapper.toView);
     }
 

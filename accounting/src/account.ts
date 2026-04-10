@@ -27,6 +27,8 @@ export class Account {
         version?: Version
     ) {
         Preconditions.checkArgument(accountId != null, "Account ID must be defined");
+        Preconditions.checkArgument(type != null, "Account type must be defined");
+        Preconditions.checkArgument(name != null, "Account name must be defined");
         this.accountId = accountId;
         this._type = type;
         this._name = name;

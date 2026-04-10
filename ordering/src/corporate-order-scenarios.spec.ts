@@ -45,7 +45,7 @@ describe('CorporateOrderScenarios', () => {
             new CancelOrderCommand(order.id, "Budget reallocation"));
 
         // then
-        expect(cancelResult.isSuccess()).toBe(true);
+        expect(cancelResult.success()).toBe(true);
         expect(cancelResult.getSuccess().status).toBe("CANCELLED");
         expect(configuration.fulfillmentService().cancelledOrders()).toHaveLength(1);
         expect(configuration.fulfillmentService().cancelledOrders()[0].value).toBe(order.id.value);

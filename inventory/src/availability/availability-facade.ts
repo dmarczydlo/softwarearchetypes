@@ -29,7 +29,7 @@ export class AvailabilityFacade {
             return ResultFactory.failure(`Availability not found: ${availabilityId}`);
         }
         const result = availability.lock(request);
-        if (result.isSuccess()) {
+        if (result.success()) {
             this.repository.save(availability);
         }
         return result;
@@ -48,7 +48,7 @@ export class AvailabilityFacade {
             return ResultFactory.failure(`No resource found with blockade: ${request.blockadeId}`);
         }
         const result = availability.unlock(request);
-        if (result.isSuccess()) {
+        if (result.success()) {
             this.repository.save(availability);
         }
         return result;
@@ -60,7 +60,7 @@ export class AvailabilityFacade {
             return ResultFactory.failure(`Availability not found: ${availabilityId}`);
         }
         const result = availability.unlock(request);
-        if (result.isSuccess()) {
+        if (result.success()) {
             this.repository.save(availability);
         }
         return result;
