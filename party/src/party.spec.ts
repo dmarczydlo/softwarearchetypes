@@ -322,7 +322,7 @@ describe('Person', () => {
         const person = somePerson();
         const data = somePersonalData();
         const result = person.update(data);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(person.personalData().firstName).toBe(data.firstName);
     });
     it('should generate PersonalDataUpdated event on change', () => {
@@ -349,7 +349,7 @@ describe('Party roles', () => {
     it('should add role', () => {
         const party = makeParty();
         const role = someRole();
-        expect(party.add(role).isSuccess()).toBe(true);
+        expect(party.add(role).success()).toBe(true);
         expect([...party.roles()].some(r => r.asString() === role.asString())).toBe(true);
     });
     it('should emit RoleAdded event', () => {
@@ -367,7 +367,7 @@ describe('Party roles', () => {
     it('should remove role', () => {
         const role = someRole();
         const party = new Person(PartyId.random(), PersonalData.empty(), new Set([role]), new Set(), Version.initial());
-        expect(party.remove(role).isSuccess()).toBe(true);
+        expect(party.remove(role).success()).toBe(true);
         expect([...party.roles()].some(r => r.asString() === role.asString())).toBe(false);
     });
     it('should emit RoleRemoved event', () => {
@@ -388,7 +388,7 @@ describe('Party registered identifiers', () => {
     it('should add identifier', () => {
         const party = somePerson();
         const id = someRegisteredIdentifier();
-        expect(party.add(id).isSuccess()).toBe(true);
+        expect(party.add(id).success()).toBe(true);
         expect([...party.registeredIdentifiers()].some(ri => ri.asString() === id.asString())).toBe(true);
     });
     it('should emit RegisteredIdentifierAdded', () => {
@@ -406,7 +406,7 @@ describe('Party registered identifiers', () => {
     it('should remove identifier', () => {
         const id = someRegisteredIdentifier();
         const party = new Person(PartyId.random(), PersonalData.empty(), new Set(), new Set([id]), Version.initial());
-        expect(party.remove(id).isSuccess()).toBe(true);
+        expect(party.remove(id).success()).toBe(true);
     });
 });
 
@@ -416,7 +416,7 @@ describe('Addresses', () => {
         const partyId = PartyId.random();
         const address = someGeoAddressFor(partyId);
         const addresses = Addresses.emptyAddressesFor(partyId);
-        expect(addresses.addOrUpdate(address).isSuccess()).toBe(true);
+        expect(addresses.addOrUpdate(address).success()).toBe(true);
     });
     it('should update existing address', () => {
         const partyId = PartyId.random();
@@ -424,18 +424,18 @@ describe('Addresses', () => {
         const addresses = Addresses.emptyAddressesFor(partyId);
         addresses.addOrUpdate(address);
         const newAddress = someGeoAddressWith(address.id(), partyId);
-        expect(addresses.addOrUpdate(newAddress).isSuccess()).toBe(true);
+        expect(addresses.addOrUpdate(newAddress).success()).toBe(true);
     });
     it('should remove address', () => {
         const partyId = PartyId.random();
         const address = someGeoAddressFor(partyId);
         const addresses = Addresses.emptyAddressesFor(partyId);
         addresses.addOrUpdate(address);
-        expect(addresses.removeAddressWith(address.id()).isSuccess()).toBe(true);
+        expect(addresses.removeAddressWith(address.id()).success()).toBe(true);
     });
     it('address removal should be ignored when not found', () => {
         const addresses = Addresses.emptyAddressesFor(PartyId.random());
-        expect(addresses.removeAddressWith(AddressId.random()).isSuccess()).toBe(true);
+        expect(addresses.removeAddressWith(AddressId.random()).success()).toBe(true);
     });
     it('should generate skip event when no changes', () => {
         const partyId = PartyId.random();
@@ -454,13 +454,13 @@ describe('PartyRoleFactory', () => {
         const party = somePerson();
         const role = someRole();
         const result = factory.defineFor(party, role);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
     it('should fail with restrictive policy', () => {
         const factory = new PartyRoleFactory({ canDefineFor: (p) => p._partyType === 'COMPANY' });
         const party = somePerson();
         const result = factory.defineFor(party, someRole());
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 });
 
@@ -471,7 +471,7 @@ describe('PartyRelationshipFactory', () => {
         const from = PartyRole.of(PartyId.random(), someRole());
         const to = PartyRole.of(PartyId.random(), someRole());
         const result = factory.defineFor(from, to, RelationshipName.of(randomString()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
 });
 
@@ -495,7 +495,7 @@ describe('RegisteredIdentifierDefiningPolicy', () => {
         const company = someCompany();
         const pesel = PersonalIdentificationNumber.of('44051401359');
         const result = company.add(pesel);
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe('IDENTIFIER_NOT_ALLOWED_FOR_PARTY_TYPE');
     });
 });
@@ -507,23 +507,23 @@ describe('PartiesFacade', () => {
 
     it('can register person', () => {
         const result = config.partiesFacade.handle(new RegisterPersonCommand('Jan', 'Kowalski', new Set(), new Set()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect((result.getSuccess() as PartyView).partyType()).toBe('PERSON');
     });
     it('can register company', () => {
         const result = config.partiesFacade.handle(new RegisterCompanyCommand('ACME', new Set(), new Set()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect((result.getSuccess() as PartyView).partyType()).toBe('COMPANY');
     });
     it('can register organization unit', () => {
         const result = config.partiesFacade.handle(new RegisterOrganizationUnitCommand('HR', new Set(), new Set()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect((result.getSuccess() as PartyView).partyType()).toBe('ORGANIZATION_UNIT');
     });
     it('can add role', () => {
         const partyId = (config.partiesFacade.handle(new RegisterPersonCommand('A', 'B', new Set(), new Set())).getSuccess() as PartyView).partyId;
         const result = config.partiesFacade.handle(new AddRoleCommand(partyId, 'Customer'));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const party = config.partiesQueries.findBy(partyId);
         expect(party!.roles.has('Customer')).toBe(true);
     });
@@ -531,27 +531,27 @@ describe('PartiesFacade', () => {
         const partyId = (config.partiesFacade.handle(new RegisterPersonCommand('A', 'B', new Set(['X']), new Set())).getSuccess() as PartyView).partyId;
         config.partiesFacade.handle(new AddRoleCommand(partyId, 'X'));
         const result = config.partiesFacade.handle(new RemoveRoleCommand(partyId, 'X'));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
     it('can add and remove registered identifier', () => {
         const partyId = (config.partiesFacade.handle(new RegisterPersonCommand('A', 'B', new Set(), new Set())).getSuccess() as PartyView).partyId;
         const id = someRegisteredIdentifier();
-        expect(config.partiesFacade.handle(new AddRegisteredIdentifierCommand(partyId, id)).isSuccess()).toBe(true);
-        expect(config.partiesFacade.handle(new RemoveRegisteredIdentifierCommand(partyId, id)).isSuccess()).toBe(true);
+        expect(config.partiesFacade.handle(new AddRegisteredIdentifierCommand(partyId, id)).success()).toBe(true);
+        expect(config.partiesFacade.handle(new RemoveRegisteredIdentifierCommand(partyId, id)).success()).toBe(true);
     });
     it('can update personal data', () => {
         const partyId = (config.partiesFacade.handle(new RegisterPersonCommand('A', 'B', new Set(), new Set())).getSuccess() as PartyView).partyId;
         const result = config.partiesFacade.handle(new UpdatePersonalDataCommand(partyId, 'New', 'Name'));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
     it('cannot update personal data of organization', () => {
         const partyId = (config.partiesFacade.handle(new RegisterCompanyCommand('ACME', new Set(), new Set())).getSuccess() as PartyView).partyId;
         const result = config.partiesFacade.handle(new UpdatePersonalDataCommand(partyId, 'New', 'Name'));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
     it('add role fails for non-existing party', () => {
         const result = config.partiesFacade.handle(new AddRoleCommand(PartyId.random(), 'X'));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 });
 
@@ -564,7 +564,7 @@ describe('AddressesFacade', () => {
         const partyId = (config.partiesFacade.handle(new RegisterPersonCommand('A', 'B', new Set(), new Set())).getSuccess() as PartyView).partyId;
         const dto = geoAddressDTOWith(partyId, 'Home', 'Warsaw', AddressUseType.RESIDENTIAL);
         const result = config.addressesFacade.handle(new AddOrUpdateGeoAddressCommand(partyId, dto));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(config.addressesQueries.findAllFor(partyId).length).toBe(1);
     });
     it('can remove address', () => {
@@ -572,7 +572,7 @@ describe('AddressesFacade', () => {
         const addressId = AddressId.random();
         config.addressesFacade.handle(new AddOrUpdateGeoAddressCommand(partyId, someGeoAddressDTOWithId(addressId, partyId, AddressUseType.RESIDENTIAL)));
         const result = config.addressesFacade.handle(new RemoveAddressCommand(partyId, addressId));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(config.addressesQueries.findAllFor(partyId).length).toBe(0);
     });
 });
@@ -590,7 +590,7 @@ describe('PartyRelationshipsFacade', () => {
         const toPartyId = registerPerson();
         const result = config.partyRelationshipsFacade.handle(
             new AssignPartyRelationshipCommand(PartyId.random(), 'X', toPartyId, 'Y', 'Z'));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toBe('PARTY_NOT_FOUND');
     });
     it('should add relationship between parties', () => {
@@ -598,7 +598,7 @@ describe('PartyRelationshipsFacade', () => {
         const to = registerPerson();
         const result = config.partyRelationshipsFacade.handle(
             new AssignPartyRelationshipCommand(from, 'Employee', to, 'Employer', 'Employment'));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
     it('should remove relationship', () => {
         const from = registerPerson();
@@ -606,7 +606,7 @@ describe('PartyRelationshipsFacade', () => {
         const rel = config.partyRelationshipsFacade.handle(
             new AssignPartyRelationshipCommand(from, 'A', to, 'B', 'C')).getSuccess() as any;
         const result = config.partyRelationshipsFacade.handle(new RemovePartyRelationshipCommand(rel.id));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
 });
 

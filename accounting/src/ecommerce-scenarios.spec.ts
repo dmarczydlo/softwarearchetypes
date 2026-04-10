@@ -31,7 +31,7 @@ describe('EcommerceScenarios', () => {
             .debitFrom(cashAccount, Money.pln(123)).creditTo(revenueAccount, Money.pln(100)).creditTo(vatPayable, Money.pln(23)).build();
         const result = facade.executeSingle(refund);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.balance(cashAccount)!.equals(Money.zeroPln())).toBe(true);
         expect(facade.balance(revenueAccount)!.equals(Money.zeroPln())).toBe(true);
         expect(facade.balance(vatPayable)!.equals(Money.zeroPln())).toBe(true);
@@ -51,7 +51,7 @@ describe('EcommerceScenarios', () => {
             .debitFrom(cashAccount, Money.pln(123)).creditTo(revenueAccount, Money.pln(100)).creditTo(vatPayable, Money.pln(23)).build();
         const result = facade.executeSingle(partialRefund);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.balance(cashAccount)!.equals(Money.pln(123))).toBe(true);
         expect(facade.balance(revenueAccount)!.equals(Money.pln(-100))).toBe(true);
         expect(facade.balance(vatPayable)!.equals(Money.pln(-23))).toBe(true);

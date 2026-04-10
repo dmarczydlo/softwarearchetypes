@@ -46,7 +46,7 @@ export { EntryAllocations, EntryAllocationStrategy, EntryAllocationFilter, Entry
 export { AccountEntryFilter, EntryFilter } from './account-entry-filter.js';
 
 // Facade & Configuration
-export { AccountingFacade } from './accounting-facade.js';
+export { AccountingFacade, AccountViewQueries } from './accounting-facade.js';
 export { AccountingConfiguration } from './accounting-configuration.js';
 
 // Events
@@ -56,7 +56,7 @@ export { DebitEntryRegistered } from './events/debit-entry-registered.js';
 
 // Posting Rules
 export { PostingRuleId } from './postingrules/posting-rule-id.js';
-export { PostingRule } from './postingrules/posting-rule.js';
+export { PostingRule, DEFAULT_PRIORITY } from './postingrules/posting-rule.js';
 export { PostingRuleBuilder } from './postingrules/posting-rule-builder.js';
 export { ConfigurablePostingRule } from './postingrules/configurable-posting-rule.js';
 export { PostingRuleExecutor } from './postingrules/posting-rule-executor.js';

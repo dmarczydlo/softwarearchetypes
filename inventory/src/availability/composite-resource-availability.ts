@@ -73,7 +73,7 @@ export class CompositeResourceAvailability implements ResourceAvailability {
         for (const [componentId, component] of this._components) {
             const componentRequest = compositeRequest.getRequestForComponent(componentId)!;
             const lockResult = component.lock(componentRequest);
-            if (lockResult.isFailure()) {
+            if (lockResult.failure()) {
                 failures.push(`${componentId}: ${lockResult.getFailure()}`);
             } else {
                 lockedComponents.set(componentId, lockResult.getSuccess());
@@ -104,7 +104,7 @@ export class CompositeResourceAvailability implements ResourceAvailability {
             const component = this._components.get(componentId)!;
             const componentUnlock = UnlockRequest.of(request.requester, componentBlockadeId);
             const result = component.unlock(componentUnlock);
-            if (result.isFailure()) {
+            if (result.failure()) {
                 failures.push(`${componentId}: ${result.getFailure()}`);
             }
         }

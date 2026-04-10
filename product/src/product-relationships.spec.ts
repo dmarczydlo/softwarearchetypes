@@ -44,7 +44,7 @@ describe("ProductRelationshipsFacade", () => {
             new DefineRelationship(nonExistingFrom.toString(), existingTo.identifier().toString(), "UPGRADABLE_TO"),
         );
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toContain("PRODUCT_NOT_FOUND");
     });
 
@@ -56,7 +56,7 @@ describe("ProductRelationshipsFacade", () => {
             new DefineRelationship(existingFrom.identifier().toString(), nonExistingTo.toString(), "UPGRADABLE_TO"),
         );
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(result.getFailure()).toContain("PRODUCT_NOT_FOUND");
     });
 
@@ -68,7 +68,7 @@ describe("ProductRelationshipsFacade", () => {
             new DefineRelationship(smallCoffee.identifier().toString(), largeCoffee.identifier().toString(), "UPGRADABLE_TO"),
         );
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const relationship = queries.findBy(result.getSuccess())!;
         expect(relationship.from.toString()).toBe(smallCoffee.identifier().toString());
         expect(relationship.to.toString()).toBe(largeCoffee.identifier().toString());
@@ -84,7 +84,7 @@ describe("ProductRelationshipsFacade", () => {
 
         const result = facade.handleRemoveRelationship(new RemoveRelationship(relationshipId.value));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(queries.findBy(relationshipId)).toBeNull();
     });
 

@@ -15,7 +15,7 @@ describe('AccountsCreatingScenarios', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
         const result = facade.createAccount(CreateAccount.generateAssetAccount(accountId, "Cash"));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const account = facade.findAccount(accountId);
         expect(account).not.toBeNull();
         expect(account!.type).toBe("ASSET");
@@ -27,7 +27,7 @@ describe('AccountsCreatingScenarios', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
         const result = facade.createAccount(new CreateAccount(accountId, "Customer Deposits", "LIABILITY"));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const account = facade.findAccount(accountId);
         expect(account).not.toBeNull();
         expect(account!.type).toBe("LIABILITY");
@@ -37,7 +37,7 @@ describe('AccountsCreatingScenarios', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
         const result = facade.createAccount(new CreateAccount(accountId, "Sales Revenue", "REVENUE"));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const account = facade.findAccount(accountId);
         expect(account).not.toBeNull();
         expect(account!.type).toBe("REVENUE");
@@ -47,7 +47,7 @@ describe('AccountsCreatingScenarios', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
         const result = facade.createAccount(new CreateAccount(accountId, "Commission Expenses", "EXPENSE"));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const account = facade.findAccount(accountId);
         expect(account).not.toBeNull();
         expect(account!.type).toBe("EXPENSE");
@@ -57,7 +57,7 @@ describe('AccountsCreatingScenarios', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
         const result = facade.createAccount(CreateAccount.generateOffBalanceAccount(accountId, "Fleet Card Limit"));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const account = facade.findAccount(accountId);
         expect(account).not.toBeNull();
         expect(account!.type).toBe("OFF_BALANCE");
@@ -68,7 +68,7 @@ describe('AccountsCreatingScenarios', () => {
         const accountId = AccountId.generate();
         facade.createAccount(CreateAccount.generateAssetAccount(accountId, "First Account"));
         const result = facade.createAccount(CreateAccount.generateAssetAccount(accountId, "Second Account"));
-        expect(result.isSuccess()).toBe(false);
+        expect(result.success()).toBe(false);
         expect(result.getFailure()).toContain("already exists");
     });
 
@@ -85,7 +85,7 @@ describe('AccountsCreatingScenarios', () => {
         ]);
 
         const result = facade.createAccounts(requests);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.findAccount(cash)).not.toBeNull();
         expect(facade.findAccount(receivables)).not.toBeNull();
         expect(facade.findAccount(payables)).not.toBeNull();
@@ -101,7 +101,7 @@ describe('AccountsCreatingScenarios', () => {
             CreateAccount.generateAssetAccount(newAccount, "New Account")
         ]);
         const result = facade.createAccounts(requests);
-        expect(result.isSuccess()).toBe(false);
+        expect(result.success()).toBe(false);
         expect(result.getFailure()).toContain("already exists");
     });
 
@@ -118,7 +118,7 @@ describe('AccountsCreatingScenarios', () => {
             [receivables, Money.pln(-1000)]
         ]));
         const result = facade.createAccountsWithInitialBalances(requests, initialBalances);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.balance(cash)!.equals(Money.pln(1000))).toBe(true);
         expect(facade.balance(receivables)!.equals(Money.pln(-1000))).toBe(true);
     });

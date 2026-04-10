@@ -32,13 +32,13 @@ function createSetup() {
 
 function generateAssetAccount(facade: AccountingFacade): AccountId {
     const accountId = AccountId.generate();
-    expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).isSuccess()).toBe(true);
+    expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).success()).toBe(true);
     return accountId;
 }
 
 function generateOffBalanceAccount(facade: AccountingFacade): AccountId {
     const accountId = AccountId.generate();
-    expect(facade.createAccount(CreateAccount.generateOffBalanceAccount(accountId, randomStringWithPrefixOf("acc"))).isSuccess()).toBe(true);
+    expect(facade.createAccount(CreateAccount.generateOffBalanceAccount(accountId, randomStringWithPrefixOf("acc"))).success()).toBe(true);
     return accountId;
 }
 
@@ -120,8 +120,8 @@ describe('PostingRulesScenarios', () => {
             .transferTo("commission", commissionAccount)
             .build();
 
-        expect(postingRulesFacade.saveRule(commissionRule).isSuccess()).toBe(true);
-        expect(accountingFacade.transfer(incomingPaymentsAccount, receivablesAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(commissionRule).success()).toBe(true);
+        expect(accountingFacade.transfer(incomingPaymentsAccount, receivablesAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).success()).toBe(true);
 
         expect(accountingFacade.balance(commissionAccount)!.equals(Money.pln(20))).toBe(true);
     });
@@ -146,10 +146,10 @@ describe('PostingRulesScenarios', () => {
             .priority(20)
             .build();
 
-        expect(postingRulesFacade.saveRule(taxRule).isSuccess()).toBe(true);
-        expect(postingRulesFacade.saveRule(bonusRule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(taxRule).success()).toBe(true);
+        expect(postingRulesFacade.saveRule(bonusRule).success()).toBe(true);
 
-        expect(accountingFacade.transfer(generateAssetAccount(accountingFacade), receivablesAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).isSuccess()).toBe(true);
+        expect(accountingFacade.transfer(generateAssetAccount(accountingFacade), receivablesAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).success()).toBe(true);
 
         expect(accountingFacade.balance(taxAccount)!.equals(Money.pln(50))).toBe(true);
         expect(accountingFacade.balance(receivablesAccount)!.equals(Money.pln(950))).toBe(true);
@@ -164,7 +164,7 @@ describe('PostingRulesScenarios', () => {
             .transferTo("target", generateOffBalanceAccount(accountingFacade))
             .build();
 
-        expect(postingRulesFacade.saveRule(rule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(rule).success()).toBe(true);
         expect(postingRulesFacade.findRule(rule.id())).toBe(rule);
         expect(postingRulesFacade.findAllRules()).toContain(rule);
     });
@@ -177,10 +177,10 @@ describe('PostingRulesScenarios', () => {
             .transferTo("target", generateOffBalanceAccount(accountingFacade))
             .build();
 
-        expect(postingRulesFacade.saveRule(rule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(rule).success()).toBe(true);
         expect(postingRulesFacade.findRule(rule.id())).toBe(rule);
 
-        expect(postingRulesFacade.deleteRule(rule.id()).isSuccess()).toBe(true);
+        expect(postingRulesFacade.deleteRule(rule.id()).success()).toBe(true);
         expect(postingRulesFacade.findRule(rule.id())).toBeNull();
         expect(postingRulesFacade.findAllRules()).not.toContain(rule);
     });
@@ -196,7 +196,7 @@ describe('PostingRulesScenarios', () => {
             .transferTo("target", targetAccount)
             .build();
 
-        expect(postingRulesFacade.saveRule(originalRule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(originalRule).success()).toBe(true);
 
         const updatedRule = new ConfigurablePostingRule(
             originalRule.id(), "Updated rule",
@@ -206,7 +206,7 @@ describe('PostingRulesScenarios', () => {
             50
         );
 
-        expect(postingRulesFacade.saveRule(updatedRule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(updatedRule).success()).toBe(true);
 
         const found = postingRulesFacade.findRule(originalRule.id());
         expect(found).toBe(updatedRule);
@@ -226,9 +226,9 @@ describe('PostingRulesScenarios', () => {
             .transferTo("target", commissionAccount)
             .build();
 
-        expect(postingRulesFacade.saveRule(commissionRule).isSuccess()).toBe(true);
+        expect(postingRulesFacade.saveRule(commissionRule).success()).toBe(true);
 
-        expect(accountingFacade.transfer(generateAssetAccount(accountingFacade), otherAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).isSuccess()).toBe(true);
+        expect(accountingFacade.transfer(generateAssetAccount(accountingFacade), otherAccount, Money.pln(1000), TUESDAY_10_00, TUESDAY_10_00).success()).toBe(true);
 
         expect(accountingFacade.balance(commissionAccount)!.equals(Money.zeroPln())).toBe(true);
     });

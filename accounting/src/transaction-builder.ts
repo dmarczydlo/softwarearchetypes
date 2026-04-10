@@ -398,9 +398,8 @@ export class ReverseTransactionEntriesBuilder {
         if (isAccountCredited(entry)) {
             reverted = AccountDebited.create(entry.accountId(), this.transactionId, entry.amount(), this.appliesAt, this.occurredAt, MetaData.empty(), Validity.always(), entry.id());
         } else {
-            // AccountDebited - amount() is negated, so we need the raw (positive) amount
-            const rawAmount = (entry as AccountDebited).rawAmount();
-            reverted = AccountCredited.create(entry.accountId(), this.transactionId, rawAmount, this.appliesAt, this.occurredAt, MetaData.empty(), Validity.always(), entry.id());
+            // AccountDebited - amount() is already negated, negate again to get the positive value for credit
+            reverted = AccountCredited.create(entry.accountId(), this.transactionId, entry.amount().negate(), this.appliesAt, this.occurredAt, MetaData.empty(), Validity.always(), entry.id());
         }
         this.entries.push(reverted);
         this.involvedAccountsIds.add(entry.accountId());

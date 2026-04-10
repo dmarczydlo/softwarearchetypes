@@ -64,7 +64,7 @@ describe('Hotel Reservation Scenarios (Temporal)', () => {
                     .resourceSpecification(TemporalSpecification.of(june15))
                     .build(),
             );
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = reservationFacade.findById(result.getSuccess());
             expect(view).not.toBeNull();
             expect(view!.status).toBe('CONFIRMED');
@@ -76,7 +76,7 @@ describe('Hotel Reservation Scenarios (Temporal)', () => {
             const june15 = TimeSlot.ofDay(CHECK_IN);
             reservationFacade.handle(ReserveRequest.forProduct(roomType).quantity(Quantity.of(1, Unit.pieces())).owner(GUEST_ANNA).purpose(ReservationPurpose.BOOKING).resourceSpecification(TemporalSpecification.of(june15)).build());
             const result = reservationFacade.handle(ReserveRequest.forProduct(roomType).quantity(Quantity.of(1, Unit.pieces())).owner(GUEST_TOMEK).purpose(ReservationPurpose.BOOKING).resourceSpecification(TemporalSpecification.of(june15)).build());
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
         });
     });
 
@@ -97,7 +97,7 @@ describe('Hotel Reservation Scenarios (Temporal)', () => {
                     .resourceSpecification(TemporalSpecification.ofList(threeNights))
                     .build(),
             );
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
         });
 
         it('reservation fails if any night in range is taken', () => {
@@ -111,7 +111,7 @@ describe('Hotel Reservation Scenarios (Temporal)', () => {
                 TimeSlot.ofDay(new Date(Date.UTC(2024, 5, 17))),
             ];
             const result = reservationFacade.handle(ReserveRequest.forProduct(roomType).quantity(Quantity.of(1, Unit.pieces())).owner(GUEST_TOMEK).purpose(ReservationPurpose.BOOKING).resourceSpecification(TemporalSpecification.ofList(threeNights)).build());
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
         });
     });
 
@@ -123,7 +123,7 @@ describe('Hotel Reservation Scenarios (Temporal)', () => {
             const annaReservation = reservationFacade.handle(ReserveRequest.forProduct(roomType).quantity(Quantity.of(1, Unit.pieces())).owner(GUEST_ANNA).purpose(ReservationPurpose.BOOKING).resourceSpecification(TemporalSpecification.of(june15)).build()).getSuccess();
             reservationFacade.cancel(annaReservation, GUEST_ANNA);
             const tomekResult = reservationFacade.handle(ReserveRequest.forProduct(roomType).quantity(Quantity.of(1, Unit.pieces())).owner(GUEST_TOMEK).purpose(ReservationPurpose.BOOKING).resourceSpecification(TemporalSpecification.of(june15)).build());
-            expect(tomekResult.isSuccess()).toBe(true);
+            expect(tomekResult.success()).toBe(true);
         });
     });
 });

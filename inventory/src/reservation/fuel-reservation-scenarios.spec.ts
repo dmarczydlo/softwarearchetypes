@@ -58,7 +58,7 @@ describe('Fuel Reservation Scenarios (Pool)', () => {
                     .resourceSpecification(QuantitySpecification.instance())
                     .build(),
             );
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = reservationFacade.findById(result.getSuccess());
             expect(view).not.toBeNull();
             expect(view!.status).toBe('CONFIRMED');
@@ -70,16 +70,16 @@ describe('Fuel Reservation Scenarios (Pool)', () => {
             const fleetA = reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(2000, LITERS)).owner(FLEET_COMPANY_A).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build());
             const fleetB = reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(3000, LITERS)).owner(FLEET_COMPANY_B).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build());
             const taxi = reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(1500, LITERS)).owner(TAXI_CORPORATION).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build());
-            expect(fleetA.isSuccess()).toBe(true);
-            expect(fleetB.isSuccess()).toBe(true);
-            expect(taxi.isSuccess()).toBe(true);
+            expect(fleetA.success()).toBe(true);
+            expect(fleetB.success()).toBe(true);
+            expect(taxi.success()).toBe(true);
         });
 
         it('reservation fails when requesting more than available', () => {
             const petrol = ProductIdentifier.random();
             setupFuelTank(petrol, 'Petrol 95', Quantity.of(1000, LITERS));
             const result = reservationFacade.handle(ReserveRequest.forProduct(petrol).quantity(Quantity.of(1500, LITERS)).owner(FLEET_COMPANY_A).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build());
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
         });
     });
 
@@ -88,10 +88,10 @@ describe('Fuel Reservation Scenarios (Pool)', () => {
             const diesel = ProductIdentifier.random();
             setupFuelTank(diesel, 'Diesel ON', Quantity.of(5000, LITERS));
             const fleetAReservation = reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(4500, LITERS)).owner(FLEET_COMPANY_A).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build()).getSuccess();
-            expect(reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(1000, LITERS)).owner(FLEET_COMPANY_B).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build()).isFailure()).toBe(true);
+            expect(reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(1000, LITERS)).owner(FLEET_COMPANY_B).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build()).failure()).toBe(true);
             reservationFacade.cancel(fleetAReservation, FLEET_COMPANY_A);
             const result = reservationFacade.handle(ReserveRequest.forProduct(diesel).quantity(Quantity.of(1000, LITERS)).owner(FLEET_COMPANY_B).purpose(ReservationPurpose.BOOKING).resourceSpecification(QuantitySpecification.instance()).build());
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
         });
     });
 

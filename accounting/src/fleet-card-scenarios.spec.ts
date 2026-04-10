@@ -32,7 +32,7 @@ describe('FleetCardScenarios', () => {
             .debitFrom(fleetCardLimit, Money.pln(200)).build();
         const result = facade.executeSingle(usage);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.balance(fleetCardLimit)!.equals(Money.pln(4800))).toBe(true);
     });
 
@@ -52,7 +52,7 @@ describe('FleetCardScenarios', () => {
             .compensatingExpired(limitEntryId).withCompensationAccount(expiredLimitsAccount).build();
 
         expect(compensation).not.toBeNull();
-        expect(facade.executeSingle(compensation!).isSuccess()).toBe(true);
+        expect(facade.executeSingle(compensation!).success()).toBe(true);
         expect(facade.balance(fleetCardLimit)!.equals(Money.pln(0))).toBe(true);
         expect(facade.balance(expiredLimitsAccount)!.equals(Money.pln(1000))).toBe(true);
     });
@@ -78,7 +78,7 @@ describe('FleetCardScenarios', () => {
             .compensatingExpired(expiringEntryId).withCompensationAccount(expiredLimitsAccount).build();
 
         expect(compensation).not.toBeNull();
-        expect(facade.executeSingle(compensation!).isSuccess()).toBe(true);
+        expect(facade.executeSingle(compensation!).success()).toBe(true);
         expect(facade.balance(fleetCardLimit)!.equals(Money.pln(2000))).toBe(true);
         expect(facade.balance(expiredLimitsAccount)!.equals(Money.pln(1000))).toBe(true);
     });

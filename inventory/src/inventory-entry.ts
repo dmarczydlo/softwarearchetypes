@@ -157,7 +157,7 @@ export class InventoryEntry {
                 resourceId, slot, cmd.owner, LockDurationFactory.indefinite(),
             );
             const lockResult = this.availabilityFacade.lockTemporal(resourceId, lockRequest);
-            if (lockResult.isFailure()) {
+            if (lockResult.failure()) {
                 this.rollback(blockadeIds, cmd);
                 return ResultFactory.failure(lockResult.getFailure());
             }
@@ -180,7 +180,7 @@ export class InventoryEntry {
         );
 
         const lockResult = this.availabilityFacade.lockIndividual(resourceId, lockRequest);
-        if (lockResult.isFailure()) {
+        if (lockResult.failure()) {
             return ResultFactory.failure(lockResult.getFailure());
         }
 
@@ -199,7 +199,7 @@ export class InventoryEntry {
         );
 
         const lockResult = this.availabilityFacade.lockPool(resourceId, lockRequest);
-        if (lockResult.isFailure()) {
+        if (lockResult.failure()) {
             return ResultFactory.failure(lockResult.getFailure());
         }
 

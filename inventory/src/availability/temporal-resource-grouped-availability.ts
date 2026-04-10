@@ -31,7 +31,7 @@ export class TemporalResourceGroupedAvailability {
                 availability.resourceId(), availability.slot(), owner, duration,
             );
             const result = availability.lock(request);
-            if (result.isFailure()) {
+            if (result.failure()) {
                 for (let i = 0; i < blockadeIds.length; i++) {
                     this._availabilities[i].unlock(UnlockRequest.of(owner, blockadeIds[i]));
                 }
@@ -53,7 +53,7 @@ export class TemporalResourceGroupedAvailability {
             const availability = this._availabilities[i];
             const blockadeId = blockadeIds[i];
             const result = availability.unlock(UnlockRequest.of(owner, blockadeId));
-            if (result.isFailure()) {
+            if (result.failure()) {
                 return ResultFactory.failure(`Failed to release slot: ${result.getFailure()}`);
             }
             releasedIds.push(result.getSuccess());

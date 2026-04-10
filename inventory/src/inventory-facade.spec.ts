@@ -30,7 +30,7 @@ describe('InventoryFacade', () => {
         it('creates inventory entry', () => {
             const laptop = InventoryProduct.individuallyTracked(ProductIdentifier.random(), 'MacBook Pro 16');
             const result = facade.handle(CreateInventoryEntry.forProduct(laptop));
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = facade.findEntry(result.getSuccess());
             expect(view).not.toBeNull();
             expect(view!.productName).toBe('MacBook Pro 16');
@@ -65,7 +65,7 @@ describe('InventoryFacade', () => {
             const entryId = f.handle(CreateInventoryEntry.forProduct(laptop)).getSuccess();
             const command = CreateInstance.forProduct(productId).withSerial('SN-12345').build();
             const result = f.createInstance(command);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const instanceView = f.findInstance(result.getSuccess());
             expect(instanceView).not.toBeNull();
             expect(instanceView!.serialNumber).toBe('SN-12345');
@@ -79,7 +79,7 @@ describe('InventoryFacade', () => {
             const f = InventoryConfiguration.inMemory(AvailabilityConfiguration.inMemory(now)).facade();
             const command = CreateInstance.forProduct(productId).withSerial('SN-12345').build();
             const result = f.createInstance(command);
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('No inventory entry found');
         });
 
@@ -91,7 +91,7 @@ describe('InventoryFacade', () => {
             const batchId = BatchId.random();
             const command = CreateInstance.forProduct(productId).withBatch(batchId).build();
             const result = f.createInstance(command);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = f.findInstance(result.getSuccess());
             expect(view).not.toBeNull();
             expect(view!.batchId).toBe(batchId.toString());
@@ -107,7 +107,7 @@ describe('InventoryFacade', () => {
                 .withFeatures(new Map([['color', 'silver'], ['storage', '256GB']]))
                 .build();
             const result = f.createInstance(command);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = f.findInstance(result.getSuccess());
             expect(view).not.toBeNull();
             expect(view!.features.get('color')).toBe('silver');
@@ -124,7 +124,7 @@ describe('InventoryFacade', () => {
             const instanceId = f.createInstance(CreateInstance.forProduct(productId).withSerial('SN-001').build()).getSuccess();
             const resourceId = ResourceId.random();
             const result = f.mapInstanceToResource(entryId, instanceId, resourceId);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = f.findEntry(entryId);
             expect(view).not.toBeNull();
             expect(view!.instanceToResource.get(instanceId.value)).toBe(resourceId.id);
@@ -139,7 +139,7 @@ describe('InventoryFacade', () => {
             const entryId = f.handle(CreateInventoryEntry.forProduct(laptop)).getSuccess();
             const instanceId = f.createInstance(CreateInstance.forProduct(productId).withSerial('SN-001').build()).getSuccess();
             const result = f.removeInstanceFromEntry(entryId, instanceId);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             const view = f.findEntry(entryId);
             expect(view).not.toBeNull();
             expect(view!.instanceIds.size).toBe(0);
@@ -240,7 +240,7 @@ describe('InventoryFacade', () => {
             const f = InventoryConfiguration.inMemory(AvailabilityConfiguration.inMemory(now)).facade();
             f.handle(CreateInventoryEntry.forProduct(laptop));
             const result = f.handle(CreateInventoryEntry.forProduct(laptop));
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('already exists');
         });
     });
@@ -252,7 +252,7 @@ describe('InventoryFacade', () => {
                 { id: 'nonexistent', equals: () => false, toString: () => 'nonexistent' } as any,
                 InstanceId.random(), ResourceId.random(),
             );
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('Entry not found');
         });
     });
@@ -273,7 +273,7 @@ describe('InventoryFacade', () => {
             const owner = OwnerId.random();
             const cmd = new LockCommand(productId, Quantity.of(1, Unit.pieces()), owner, IndividualSpecification.of(instanceId));
             const result = f.handleLock(cmd);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(result.getSuccess()).toHaveLength(1);
         });
 
@@ -292,7 +292,7 @@ describe('InventoryFacade', () => {
             const owner = OwnerId.random();
             const cmd = new LockCommand(productId, Quantity.of(500, Unit.liters()), owner, QuantitySpecification.instance());
             const result = f.handleLock(cmd);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(result.getSuccess()).toHaveLength(1);
         });
 
@@ -312,7 +312,7 @@ describe('InventoryFacade', () => {
             const owner = OwnerId.random();
             const cmd = new LockCommand(productId, Quantity.of(1, Unit.pieces()), owner, TemporalSpecification.of(june15));
             const result = f.handleLock(cmd);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(result.getSuccess()).toHaveLength(1);
         });
 
@@ -336,7 +336,7 @@ describe('InventoryFacade', () => {
             const owner = OwnerId.random();
             const cmd = new LockCommand(productId, Quantity.of(1, Unit.pieces()), owner, TemporalSpecification.ofList([night1, night2, night3]));
             const result = f.handleLock(cmd);
-            expect(result.isSuccess()).toBe(true);
+            expect(result.success()).toBe(true);
             expect(result.getSuccess()).toHaveLength(3);
         });
 
@@ -356,7 +356,7 @@ describe('InventoryFacade', () => {
             const bob = OwnerId.random();
             f.handleLock(new LockCommand(productId, Quantity.of(1, Unit.pieces()), alice, IndividualSpecification.of(instanceId)));
             const result = f.handleLock(new LockCommand(productId, Quantity.of(1, Unit.pieces()), bob, IndividualSpecification.of(instanceId)));
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
         });
 
         it('fails lock when no resource mapped', () => {
@@ -369,7 +369,7 @@ describe('InventoryFacade', () => {
             const instanceId = InstanceId.random();
             const cmd = new LockCommand(productId, Quantity.of(1, Unit.pieces()), OwnerId.random(), IndividualSpecification.of(instanceId));
             const result = f.handleLock(cmd);
-            expect(result.isFailure()).toBe(true);
+            expect(result.failure()).toBe(true);
             expect(result.getFailure()).toContain('No resource mapped');
         });
     });

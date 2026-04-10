@@ -21,7 +21,7 @@ describe('OrderingFacade', () => {
     it('should create simple order', () => {
         const result = facade.handleCreateOrder(simpleOrderCommand("APPLE-IPHONE-15-PRO", 1, "pieces"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const view = result.getSuccess();
         expect(view.status).toBe("DRAFT");
         expect(view.lines).toHaveLength(1);
@@ -39,7 +39,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines).toHaveLength(2);
     });
 
@@ -55,7 +55,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const line = result.getSuccess().lines[0];
         expect(line.specification.get("vin")).toBe("WBA12345678901234");
         expect(line.specification.get("color")).toBe("black");
@@ -76,7 +76,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const view = result.getSuccess();
         expect(view.parties).toHaveLength(3);
         expect(view.parties.some(p =>
@@ -100,7 +100,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         const line = result.getSuccess().lines[0];
         expect(line.parties).toHaveLength(1);
         expect(line.parties[0].partyId).toBe("branch-cracow");
@@ -111,9 +111,9 @@ describe('OrderingFacade', () => {
         const created = facade.handleCreateOrder(simpleOrderCommand("LAPTOP-DELL-5540", 1, "pieces")).getSuccess();
 
         const result = facade.handleAddOrderLine(
-            new AddOrderLineCommand(created.id, "MOUSE-LOGITECH-MX3", 2, "pieces", {}));
+            new AddOrderLineCommand(created.id, "MOUSE-LOGITECH-MX3", 2, "pieces", new Map()));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines).toHaveLength(2);
     });
 
@@ -131,7 +131,7 @@ describe('OrderingFacade', () => {
         const result = facade.handleRemoveOrderLine(
             new RemoveOrderLineCommand(created.id, lineToRemove));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines).toHaveLength(1);
         expect(result.getSuccess().lines[0].productId).toBe("LAPTOP-DELL-5540");
     });
@@ -143,7 +143,7 @@ describe('OrderingFacade', () => {
         const result = facade.handleChangeOrderLineQuantity(
             new ChangeOrderLineQuantityCommand(created.id, lineId, 500, "pieces"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().lines[0].quantity).toContain("500");
     });
 
@@ -152,7 +152,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("CONFIRMED");
     });
 
@@ -161,7 +161,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCancelOrder(new CancelOrderCommand(created.id, "Changed my mind"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("CANCELLED");
     });
 
@@ -171,7 +171,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCancelOrder(new CancelOrderCommand(created.id, "Customer request"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("CANCELLED");
     });
 
@@ -180,9 +180,9 @@ describe('OrderingFacade', () => {
         facade.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
         const result = facade.handleAddOrderLine(
-            new AddOrderLineCommand(created.id, "MOUSE-LOGITECH-MX3", 1, "pieces", {}));
+            new AddOrderLineCommand(created.id, "MOUSE-LOGITECH-MX3", 1, "pieces", new Map()));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('should fail to confirm already confirmed order', () => {
@@ -191,7 +191,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('should fail to create order without lines', () => {
@@ -199,7 +199,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('should fail to create order with invalid roles', () => {
@@ -212,7 +212,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleCreateOrder(command);
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('should fail to remove last line', () => {
@@ -221,7 +221,7 @@ describe('OrderingFacade', () => {
 
         const result = facade.handleRemoveOrderLine(new RemoveOrderLineCommand(created.id, lineId));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('should find order by id', () => {
@@ -255,7 +255,7 @@ describe('OrderingFacade', () => {
 
         const result = facade3.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("CONFIRMED");
         expect(config3.inventoryService().allocateRequests()).toHaveLength(1);
         expect(config3.paymentService().authorizeRequests()).toHaveLength(1);
@@ -271,7 +271,7 @@ describe('OrderingFacade', () => {
 
         const result = facade4.handleCancelOrder(new CancelOrderCommand(created.id, "Customer changed mind"));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("CANCELLED");
         expect(config4.fulfillmentService().cancelledOrders()).toHaveLength(1);
     });
@@ -286,7 +286,7 @@ describe('OrderingFacade', () => {
         const result = facade5.handleFulfillmentUpdated(
             new FulfillmentUpdated(created.id, FulfillmentStatus.IN_PROGRESS, "Picking started", new Date()));
 
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess().status).toBe("PROCESSING");
     });
 
@@ -323,7 +323,7 @@ describe('OrderingFacade', () => {
 
         const result = facade7.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         const order = queries7.findById(created.id)!;
         expect(order.status).toBe("DRAFT");
     });
@@ -338,7 +338,7 @@ describe('OrderingFacade', () => {
 
         const result = facade8.handleConfirmOrder(new ConfirmOrderCommand(created.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         const order = queries8.findById(created.id)!;
         expect(order.status).toBe("DRAFT");
     });
@@ -349,7 +349,7 @@ describe('OrderingFacade', () => {
         const result = facade.handleFulfillmentUpdated(
             new FulfillmentUpdated(created.id, FulfillmentStatus.IN_PROGRESS, "Picking", new Date()));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     // --- Helper methods ---

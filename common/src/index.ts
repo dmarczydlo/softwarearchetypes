@@ -1,4 +1,4 @@
-export { Preconditions } from './preconditions.js';
+export { Preconditions, IllegalArgumentError, IllegalStateError } from './preconditions.js';
 export { StringUtils } from './string-utils.js';
 export { Pair } from './pair.js';
 export { CollectionTransformations } from './collection-transformations.js';

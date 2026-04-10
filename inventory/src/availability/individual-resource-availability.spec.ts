@@ -20,7 +20,7 @@ describe('IndividualResourceAvailability', () => {
         const laptop = IndividualResourceAvailability.create(LAPTOP_ID);
         const request = IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite());
         const result = laptop.lock(request);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(laptop.isAvailable()).toBe(false);
     });
 
@@ -28,14 +28,14 @@ describe('IndividualResourceAvailability', () => {
         const laptop = IndividualResourceAvailability.create(LAPTOP_ID);
         laptop.lock(IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite()));
         const result = laptop.lock(IndividualLockRequest.of(LAPTOP_ID, BOB, LockDurationFactory.indefinite()));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('same owner can relock resource', () => {
         const laptop = IndividualResourceAvailability.create(LAPTOP_ID);
         laptop.lock(IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite()));
         const result = laptop.lock(IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
     });
 
     it('owner can unlock resource', () => {
@@ -43,7 +43,7 @@ describe('IndividualResourceAvailability', () => {
         const lockResult = laptop.lock(IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite()));
         const blockadeId = lockResult.getSuccess();
         const unlockResult = laptop.unlock(UnlockRequest.of(ALICE, blockadeId));
-        expect(unlockResult.isSuccess()).toBe(true);
+        expect(unlockResult.success()).toBe(true);
         expect(laptop.isAvailable()).toBe(true);
     });
 
@@ -52,7 +52,7 @@ describe('IndividualResourceAvailability', () => {
         const lockResult = laptop.lock(IndividualLockRequest.of(LAPTOP_ID, ALICE, LockDurationFactory.indefinite()));
         const blockadeId = lockResult.getSuccess();
         const unlockResult = laptop.unlock(UnlockRequest.of(BOB, blockadeId));
-        expect(unlockResult.isFailure()).toBe(true);
+        expect(unlockResult.failure()).toBe(true);
         expect(laptop.isAvailable()).toBe(false);
     });
 

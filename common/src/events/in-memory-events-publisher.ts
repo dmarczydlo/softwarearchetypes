@@ -6,16 +6,16 @@ export class InMemoryEventsPublisher implements EventPublisher {
 
     private readonly observers: Set<EventHandler> = new Set<EventHandler>();
 
-    public publish(event: PublishedEvent): void {
-        this.observers.forEach((handler: EventHandler) => {
-            if (handler.supports(event)) {
-                handler.handle(event);
-            }
-        });
-    }
-
-    public publishAll(events: PublishedEvent[]): void {
-        events.forEach((event: PublishedEvent) => this.publish(event));
+    public publish(eventOrEvents: PublishedEvent | PublishedEvent[]): void {
+        if (Array.isArray(eventOrEvents)) {
+            eventOrEvents.forEach((event: PublishedEvent) => this.publish(event));
+        } else {
+            this.observers.forEach((handler: EventHandler) => {
+                if (handler.supports(eventOrEvents)) {
+                    handler.handle(eventOrEvents);
+                }
+            });
+        }
     }
 
     public register(eventHandler: EventHandler): void {

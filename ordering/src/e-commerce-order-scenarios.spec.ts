@@ -34,7 +34,7 @@ describe('ECommerceOrderScenarios', () => {
 
         // when - customer adds a mouse
         order = facade.handleAddOrderLine(
-            new AddOrderLineCommand(order.id, "MOUSE-LOGITECH-MX3", 1, "pieces", { "color": "black" })
+            new AddOrderLineCommand(order.id, "MOUSE-LOGITECH-MX3", 1, "pieces", new Map([["color", "black"]]))
         ).getSuccess();
 
         // then
@@ -53,7 +53,7 @@ describe('ECommerceOrderScenarios', () => {
         const confirmResult = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
         // then - inventory allocated, payment captured, fulfillment started
-        expect(confirmResult.isSuccess()).toBe(true);
+        expect(confirmResult.success()).toBe(true);
         order = confirmResult.getSuccess();
         expect(order.status).toBe("CONFIRMED");
         expect(configuration.inventoryService().allocateRequests()).toHaveLength(2);

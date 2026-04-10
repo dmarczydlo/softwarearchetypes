@@ -20,7 +20,7 @@ describe('TemporalResourceGroupedAvailability', () => {
         const stay = TemporalResourceGroupedAvailability.of(ROOM_101, slots);
 
         const result = stay.block(ALICE, LockDurationFactory.indefinite());
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(result.getSuccess()).toHaveLength(3);
         expect(stay.blockedEntirelyBy(ALICE)).toBe(true);
     });
@@ -37,7 +37,7 @@ describe('TemporalResourceGroupedAvailability', () => {
         stay.availabilities()[1].lock(TemporalLockRequest.indefinite(ROOM_101, slots[1], BOB));
 
         const result = stay.block(ALICE, LockDurationFactory.indefinite());
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         // first night should not be blocked (rollback)
         expect(stay.availabilities()[0].isAvailable()).toBe(true);
     });
@@ -52,7 +52,7 @@ describe('TemporalResourceGroupedAvailability', () => {
         const blockadeIds = blockResult.getSuccess();
 
         const releaseResult = stay.release(ALICE, blockadeIds);
-        expect(releaseResult.isSuccess()).toBe(true);
+        expect(releaseResult.success()).toBe(true);
         expect(stay.isEntirelyAvailable()).toBe(true);
     });
 

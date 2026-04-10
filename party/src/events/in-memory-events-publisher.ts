@@ -8,12 +8,12 @@ export interface InMemoryEventObserver {
 export class InMemoryEventsPublisher implements EventPublisher {
     private readonly observers: Set<InMemoryEventObserver> = new Set();
 
-    publish(event: PublishedEvent): void {
-        this.observers.forEach(it => it.handle(event));
-    }
-
-    publishAll(events: PublishedEvent[]): void {
-        events.forEach(e => this.publish(e));
+    publish(eventOrEvents: PublishedEvent | PublishedEvent[]): void {
+        if (Array.isArray(eventOrEvents)) {
+            eventOrEvents.forEach(e => this.publish(e));
+        } else {
+            this.observers.forEach(it => it.handle(eventOrEvents));
+        }
     }
 
     register(observer: InMemoryEventObserver): void {

@@ -30,7 +30,7 @@ import { TransactionType } from './transaction-type.js';
 import { TransactionView } from './transaction-view.js';
 import { Validity } from './validity.js';
 
-class AccountViewQueries {
+export class AccountViewQueries {
     private readonly accountRepository: AccountRepository;
     private readonly entryRepository: EntryRepository;
 
@@ -111,18 +111,6 @@ export class AccountingFacade {
         this.eventPublisher = eventPublisher;
     }
 
-    static createWithQueries(
-        clock: () => Date,
-        accountRepository: AccountRepository,
-        entryRepository: EntryRepository,
-        transactionRepository: TransactionRepository,
-        transactionBuilderFactory: TransactionBuilderFactory,
-        eventPublisher: EventPublisher
-    ): AccountingFacade {
-        const accountViewQueries = new AccountViewQueries(accountRepository, entryRepository);
-        return new AccountingFacade(clock, accountRepository, accountViewQueries, transactionRepository, transactionBuilderFactory, eventPublisher);
-    }
-
     createAccounts(requests: Set<CreateAccount>): Result<string, Set<AccountId>> {
         const ids = new Set<AccountId>();
         for (const req of requests) {
@@ -186,7 +174,7 @@ export class AccountingFacade {
                 .build();
             return this.executeSingle(transaction);
         });
-        if (txResult.isSuccess()) {
+        if (txResult.success()) {
             return creation;
         } else {
             return ResultFactory.failure(txResult.getFailure());
@@ -266,7 +254,7 @@ export class AccountingFacade {
         const result = CompositeSetResult.fromSet<string, TransactionId>(new Set());
         for (const transaction of transactions) {
             const accumulated = result.accumulate(this.executeSingle(transaction));
-            if (accumulated.isFailure()) {
+            if (accumulated.failure()) {
                 return accumulated.toResult();
             }
         }
@@ -349,6 +337,6 @@ export class AccountingFacade {
             account.clearPendingEvents();
         }
         this.accountRepository.saveAccounts(accounts);
-        this.eventPublisher.publishAll(allEvents);
+        this.eventPublisher.publish(allEvents);
     }
 }

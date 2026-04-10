@@ -48,7 +48,7 @@ describe('BankingScenarios', () => {
             .build();
 
         const result = facade.executeSingle(repayment);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(facade.balance(cashAccount)!.equals(Money.pln(-9540))).toBe(true);
         expect(facade.balance(principalReceivable)!.equals(Money.pln(9000))).toBe(true);
         expect(facade.balance(interestReceivable)!.equals(Money.pln(450))).toBe(true);
@@ -70,7 +70,7 @@ describe('BankingScenarios', () => {
             .occurredAt(TUESDAY_10_00).appliesAt(TUESDAY_10_00).withTypeOf("loan_repayment").executing()
             .creditTo(cashAccount, Money.pln(300)).debitFrom(principalReceivable, Money.pln(300)).debitFrom(janPrincipal, Money.pln(300)).build();
 
-        expect(facade.executeMultiple(mariaRepayment, janRepayment).isSuccess()).toBe(true);
+        expect(facade.executeMultiple(mariaRepayment, janRepayment).success()).toBe(true);
         expect(facade.balance(cashAccount)!.equals(Money.pln(800))).toBe(true);
         expect(facade.balance(principalReceivable)!.equals(Money.pln(-800))).toBe(true);
         expect(facade.balance(mariaPrincipal)!.equals(Money.pln(-500))).toBe(true);

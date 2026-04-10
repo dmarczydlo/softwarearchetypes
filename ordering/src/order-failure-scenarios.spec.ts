@@ -18,7 +18,7 @@ describe('OrderFailureScenarios', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(queries.findById(order.id)!.status).toBe("DRAFT");
         expect(configuration.paymentService().authorizeRequests()).toHaveLength(0);
         expect(configuration.fulfillmentService().startedOrders()).toHaveLength(0);
@@ -34,7 +34,7 @@ describe('OrderFailureScenarios', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(queries.findById(order.id)!.status).toBe("DRAFT");
         expect(configuration.inventoryService().allocateRequests().length).toBeGreaterThan(0);
         expect(configuration.fulfillmentService().startedOrders()).toHaveLength(0);
@@ -48,9 +48,9 @@ describe('OrderFailureScenarios', () => {
         facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
         const result = facade.handleAddOrderLine(
-            new AddOrderLineCommand(order.id, "MOUSE", 1, "pieces", {}));
+            new AddOrderLineCommand(order.id, "MOUSE", 1, "pieces", new Map()));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('cannot cancel already cancelled order', () => {
@@ -63,7 +63,7 @@ describe('OrderFailureScenarios', () => {
         const result = facade.handleCancelOrder(
             new CancelOrderCommand(order.id, "Double cancel"));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('confirm fails when inventory waitlisted', () => {
@@ -76,7 +76,7 @@ describe('OrderFailureScenarios', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(queries.findById(order.id)!.status).toBe("DRAFT");
     });
 
@@ -90,7 +90,7 @@ describe('OrderFailureScenarios', () => {
 
         const result = facade.handleConfirmOrder(new ConfirmOrderCommand(order.id));
 
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
         expect(queries.findById(order.id)!.status).toBe("DRAFT");
     });
 

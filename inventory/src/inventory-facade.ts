@@ -134,7 +134,7 @@ export class InventoryFacade {
             entry.product.trackingStrategy,
             command.features,
         );
-        if (validation.isFailure()) {
+        if (validation.failure()) {
             return ResultFactory.failure(validation.getFailure());
         }
 

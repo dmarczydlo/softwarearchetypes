@@ -19,7 +19,7 @@ function createFacade() {
 
 function generateAssetAccount(facade: ReturnType<typeof createFacade>): AccountId {
     const creation = CreateAccount.generateAssetAccount(randomStringWithPrefixOf("acc"));
-    expect(facade.createAccount(creation).isSuccess()).toBe(true);
+    expect(facade.createAccount(creation).success()).toBe(true);
     return creation.accountId;
 }
 
@@ -27,7 +27,7 @@ describe('AccountingCreditDebitScenarios', () => {
     it('should return zero balance for empty account', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
-        expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).isSuccess()).toBe(true);
+        expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).success()).toBe(true);
 
         const balance = facade.balance(accountId);
         expect(balance).not.toBeNull();
@@ -37,7 +37,7 @@ describe('AccountingCreditDebitScenarios', () => {
     it('should have no transactions registered for empty account', () => {
         const facade = createFacade();
         const accountId = AccountId.generate();
-        expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).isSuccess()).toBe(true);
+        expect(facade.createAccount(CreateAccount.generateAssetAccount(accountId, randomStringWithPrefixOf("acc"))).success()).toBe(true);
 
         const transactions = facade.findTransactionIdsFor(accountId);
         expect(transactions).toHaveLength(0);
@@ -49,7 +49,7 @@ describe('AccountingCreditDebitScenarios', () => {
         const debitedAccount = generateAssetAccount(facade);
 
         const result = facade.transfer(debitedAccount, creditedAccount, Money.pln(100), TUESDAY_10_00, TUESDAY_10_00);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
 
         const creditBalance = facade.balance(creditedAccount);
         const debitBalance = facade.balance(debitedAccount);
@@ -63,7 +63,7 @@ describe('AccountingCreditDebitScenarios', () => {
         const debitedAccount = generateAssetAccount(facade);
 
         const result = facade.transfer(debitedAccount, creditedAccount, Money.pln(100), TUESDAY_10_00, TUESDAY_10_00);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
 
         const creditedTxs = facade.findTransactionIdsFor(creditedAccount);
         const debitedTxs = facade.findTransactionIdsFor(debitedAccount);
@@ -90,7 +90,7 @@ describe('AccountingCreditDebitScenarios', () => {
             .build();
 
         const result = facade.executeSingle(transaction);
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
 
         const view = facade.findTransactionBy(transaction.id());
         expect(view).not.toBeNull();
@@ -118,9 +118,9 @@ describe('AccountingCreditDebitScenarios', () => {
         const r2 = facade.transfer(account, paymentAccount, Money.pln(30), TUESDAY_11_00, TUESDAY_11_00);
         const r3 = facade.transfer(account, paymentAccount, Money.pln(30), TUESDAY_12_00, TUESDAY_12_00);
 
-        expect(r1.isSuccess()).toBe(true);
-        expect(r2.isSuccess()).toBe(true);
-        expect(r3.isSuccess()).toBe(true);
+        expect(r1.success()).toBe(true);
+        expect(r2.success()).toBe(true);
+        expect(r3.success()).toBe(true);
 
         expect(facade.balanceAsOf(account, TUESDAY_10_00)!.equals(Money.pln(100))).toBe(true);
         expect(facade.balanceAsOf(account, TUESDAY_11_00)!.equals(Money.pln(70))).toBe(true);
@@ -133,9 +133,9 @@ describe('AccountingCreditDebitScenarios', () => {
         const acc2 = generateAssetAccount(facade);
         const paymentAccount = generateAssetAccount(facade);
 
-        expect(facade.transfer(paymentAccount, acc1, Money.pln(100), TUESDAY_10_00, TUESDAY_10_00).isSuccess()).toBe(true);
-        expect(facade.transfer(paymentAccount, acc2, Money.pln(200), TUESDAY_10_00, TUESDAY_10_00).isSuccess()).toBe(true);
-        expect(facade.transfer(acc2, paymentAccount, Money.pln(50), TUESDAY_11_00, TUESDAY_11_00).isSuccess()).toBe(true);
+        expect(facade.transfer(paymentAccount, acc1, Money.pln(100), TUESDAY_10_00, TUESDAY_10_00).success()).toBe(true);
+        expect(facade.transfer(paymentAccount, acc2, Money.pln(200), TUESDAY_10_00, TUESDAY_10_00).success()).toBe(true);
+        expect(facade.transfer(acc2, paymentAccount, Money.pln(50), TUESDAY_11_00, TUESDAY_11_00).success()).toBe(true);
 
         const balances = facade.balancesAsOf(new Set([acc1, acc2]), TUESDAY_11_00);
         expect(balances.get(acc1)!.equals(Money.pln(100))).toBe(true);

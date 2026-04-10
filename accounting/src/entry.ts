@@ -134,7 +134,6 @@ export class AccountDebited implements Entry {
     accountId(): AccountId { return this._accountId; }
     // AccountDebited negates the amount
     amount(): Money { return this._amount.negate(); }
-    rawAmount(): Money { return this._amount; }
     metadata(): MetaData { return this._metadata; }
     validity(): Validity { return this._validity; }
     appliedTo(): EntryId | null { return this._appliedTo; }

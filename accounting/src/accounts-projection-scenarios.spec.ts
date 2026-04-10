@@ -20,8 +20,8 @@ describe('AccountsProjectionScenarios', () => {
         const projected = AccountId.generate();
         const projecting = AccountId.generate();
 
-        expect(facade.createAccount(CreateAccount.generateAssetAccount(cash, randomStringWithPrefixOf("cash"))).isSuccess()).toBe(true);
-        expect(facade.createAccount(CreateAccount.generateAssetAccount(projected, randomStringWithPrefixOf("projected"))).isSuccess()).toBe(true);
+        expect(facade.createAccount(CreateAccount.generateAssetAccount(cash, randomStringWithPrefixOf("cash"))).success()).toBe(true);
+        expect(facade.createAccount(CreateAccount.generateAssetAccount(projected, randomStringWithPrefixOf("projected"))).success()).toBe(true);
 
         const entryPredicate = (entry: import('./entry.js').Entry) => {
             return EntryFilter.ENTRY_OF_ACCOUNT(projected)(entry) &&
@@ -29,7 +29,7 @@ describe('AccountsProjectionScenarios', () => {
         };
 
         const projectingResult = facade.createProjectingAccountWithFilter(projecting, Filter.just(entryPredicate), "ewa-opis");
-        expect(projectingResult.isSuccess()).toBe(true);
+        expect(projectingResult.success()).toBe(true);
 
         facade.transfer(projected, cash, Money.pln(40), NOW, NOW, new MetaData(new Map([["initiator", "ewa"]])));
         facade.transfer(projected, cash, Money.pln(10), NOW, NOW);
@@ -59,7 +59,7 @@ describe('AccountsProjectionScenarios', () => {
         };
 
         const result = facade.createProjectingAccountWithFilter(projecting, Filter.just(entryPredicate), "ewa-opis");
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
 
         const projectedView = facade.findAccount(projected);
         const projectingView = facade.findAccount(projecting);

@@ -25,7 +25,7 @@ describe('PoolResourceAvailability', () => {
         const milk = PoolResourceAvailability.create(MILK_ID, capacity);
         const requested = Quantity.of(30, LITERS);
         const result = milk.lock(PoolLockRequest.of(MILK_ID, requested, ALICE, LockDurationFactory.indefinite()));
-        expect(result.isSuccess()).toBe(true);
+        expect(result.success()).toBe(true);
         expect(milk.availableQuantity().amount).toBe(70);
     });
 
@@ -43,7 +43,7 @@ describe('PoolResourceAvailability', () => {
         const milk = PoolResourceAvailability.create(MILK_ID, capacity);
         milk.lock(PoolLockRequest.of(MILK_ID, Quantity.of(80, LITERS), ALICE, LockDurationFactory.indefinite()));
         const result = milk.lock(PoolLockRequest.of(MILK_ID, Quantity.of(30, LITERS), BOB, LockDurationFactory.indefinite()));
-        expect(result.isFailure()).toBe(true);
+        expect(result.failure()).toBe(true);
     });
 
     it('unlocking restores capacity', () => {

@@ -12,16 +12,13 @@ export class OrderLineSpecification {
     static of(key: string, value: string): OrderLineSpecification;
     static of(key1: string, value1: string, key2: string, value2: string): OrderLineSpecification;
     static of(attributes: Map<string, string>): OrderLineSpecification;
-    static of(attributes: Record<string, string>): OrderLineSpecification;
     static of(...args: unknown[]): OrderLineSpecification {
         if (args.length === 1) {
             const arg = args[0];
             if (arg instanceof Map) {
                 return new OrderLineSpecification(new Map(arg));
             }
-            // Record<string, string>
-            const record = arg as Record<string, string>;
-            return new OrderLineSpecification(new Map(Object.entries(record)));
+            throw new Error("Invalid argument for OrderLineSpecification.of: expected Map<string, string>");
         }
         if (args.length === 2) {
             const map = new Map<string, string>();
